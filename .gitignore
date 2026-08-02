@@ -1,0 +1,32 @@
+# build output
+/dist/
+*.bundle.html
+
+# dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# secrets
+.env
+.env.*
+*.key
+
+# user media — never commit a participant's or user's files
+*.mp3
+*.m4a
+*.wav
+*.flac
+/apps/*/sample-library/
+/apps/*/user-files/
+
+# session recordings and participant data
+/docs/reports/sessions/
+*.mov
+*.mp4
+
+# os
+.DS_Store
+Thumbs.db

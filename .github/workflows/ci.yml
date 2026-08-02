@@ -1,0 +1,76 @@
+name: Static Site CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate HTML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java (required by vnu validator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install vnu HTML validator
+        run: npm install -g vnu-jar
+
+      - name: Validate all HTML (errors only)
+        run: |
+          FILES=$(find . -name '*.html' -not -path './node_modules/*' -not -path './dist/*')
+          if [ -z "$FILES" ]; then
+            echo "No HTML files found."
+            exit 0
+          fi
+          echo "Validating:"
+          echo "$FILES"
+          java -jar "$(npm root -g)/vnu-jar/build/dist/vnu.jar" \
+            --errors-only \
+            --skip-non-html \
+            $FILES
+
+  structure:
+    name: Check repo structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every app must have an index.html
+        run: |
+          FAIL=0
+          for d in apps/*/; do
+            if [ ! -f "$d/index.html" ]; then
+              echo "MISSING: $d has no index.html"
+              FAIL=1
+            fi
+          done
+          exit $FAIL
+
+      - name: Required docs must exist
+        run: |
+          FAIL=0
+          for f in docs/DESIGN_STANDARD.md docs/EARL_RUBRIC.md docs/ROADMAP.md docs/AGENT_LANES.md; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              FAIL=1
+            fi
+          done
+          exit $FAIL
+
+      - name: No media or participant data committed
+        run: |
+          BAD=$(find . -type f \( -name '*.mp3' -o -name '*.m4a' -o -name '*.wav' -o -name '*.mov' -o -name '*.mp4' \) -not -path './node_modules/*' || true)
+          if [ -n "$BAD" ]; then
+            echo "Media files must never be committed:"
+            echo "$BAD"
+            exit 1
+          fi
+          echo "Clean."

@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mode Studio v5.0 — All-Harness Model Ops</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<style>
+:root{
+  --bg:#0b0e12; --panel:#12161c; --panel2:#171c24; --edge:#232a33; --edge2:#2e3742;
+  --ink:#e8ecf1; --dim:#8b95a3; --faint:#5b6472;
+  --cyan:#4fc3f7; --amber:#ffb74d; --green:#66bb6a; --violet:#b388ff; --red:#ef6e6e;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:14px;display:flex;flex-direction:column;overflow:hidden}
+body.light{--bg:#f2f4f7;--panel:#ffffff;--panel2:#eaeef3;--edge:#d5dbe3;--edge2:#c2cad4;--ink:#1a2028;--dim:#5b6472;--faint:#9aa3af}
+button{font-family:var(--mono);cursor:pointer}
+input,textarea,select{font-family:var(--mono);background:var(--panel2);border:1px solid var(--edge2);color:var(--ink);border-radius:6px;padding:8px 10px;font-size:13px;outline:none}
+input:focus,textarea:focus{border-color:var(--cyan)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--edge2);border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── status bar (signature) ── */
+#modebar{display:flex;align-items:stretch;gap:0;background:var(--panel);border-bottom:1px solid var(--edge);user-select:none;flex-wrap:wrap}
+#modebar .brand{padding:10px 16px;font-weight:800;letter-spacing:.5px;color:var(--cyan);border-right:1px solid var(--edge);display:flex;align-items:center;gap:8px}
+#modebar .brand small{color:var(--faint);font-weight:400}
+.mtab{padding:10px 14px;background:none;border:none;border-right:1px solid var(--edge);color:var(--dim);font-size:13px;display:flex;gap:8px;align-items:center;transition:color .15s, box-shadow .15s}
+.mtab .k{font-size:10px;color:var(--faint);border:1px solid var(--edge2);border-radius:4px;padding:0 4px}
+.mtab:hover{color:var(--ink)}
+.mtab.active{color:var(--ink);box-shadow:inset 0 -2px 0 var(--cyan)}
+#modebar .spacer{flex:1}
+.iconbtn{background:none;border:none;border-left:1px solid var(--edge);color:var(--dim);padding:10px 14px;font-size:13px}
+.iconbtn:hover{color:var(--ink)}
+#harness-sel{background:var(--panel2);border:1px solid var(--edge2);color:var(--cyan);border-radius:6px;margin:8px 10px;padding:4px 8px;font-size:12px;font-weight:700}
+
+#main{flex:1;overflow:auto;position:relative}
+.wrap{max-width:1200px;margin:0 auto;padding:20px}
+h2.modehead{font-size:15px;font-weight:700;letter-spacing:.5px;margin-bottom:4px}
+p.modesub{color:var(--dim);font-size:12px;margin-bottom:16px}
+
+/* category colors */
+.c-session{--cat:var(--cyan)} .c-models{--cat:var(--amber)} .c-config{--cat:var(--green)} .c-info{--cat:var(--violet)} .c-custom{--cat:var(--red)}
+.badge{font-size:10px;color:var(--cat);border:1px solid color-mix(in srgb,var(--cat) 45%,transparent);border-radius:4px;padding:1px 6px;text-transform:uppercase;letter-spacing:.5px}
+
+/* command cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--edge);border-left:3px solid var(--cat);border-radius:8px;padding:12px;transition:border-color .15s,transform .1s}
+.card:hover{border-color:var(--cat);transform:translateY(-1px)}
+.card .cmd{font-weight:700;color:var(--cat);cursor:pointer;word-break:break-all}
+.card .desc{color:var(--dim);font-size:12px;margin:6px 0}
+.card .ex{color:var(--faint);font-size:11px;border-top:1px dashed var(--edge);padding-top:6px;margin-top:6px;display:none;word-break:break-all}
+.card.showex .ex{display:block}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.minibtn{background:none;border:1px solid var(--edge2);color:var(--dim);border-radius:5px;font-size:11px;padding:2px 8px}
+.minibtn:hover{color:var(--ink);border-color:var(--dim)}
+.minibtn.danger:hover{color:var(--red);border-color:var(--red)}
+
+.toolrow{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.toolrow input[type=text]{flex:1;min-width:200px}
+.chip{background:var(--panel2);border:1px solid var(--edge2);color:var(--dim);border-radius:99px;padding:5px 12px;font-size:12px}
+.chip.on{color:var(--ink);border-color:var(--cyan);box-shadow:0 0 8px color-mix(in srgb,var(--cyan) 30%,transparent)}
+
+/* toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--panel);border:1px solid var(--green);color:var(--ink);border-radius:8px;padding:10px 18px;font-size:13px;transition:transform .25s;z-index:99;max-width:90vw;word-break:break-all}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast b{color:var(--green)}
+
+/* modal */
+#modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:50}
+#modal-bg.open{display:flex}
+#modal{background:var(--panel);border:1px solid var(--edge2);border-radius:10px;padding:22px;width:min(560px,92vw);max-height:85vh;overflow:auto}
+#modal h3{font-size:14px;margin-bottom:12px;color:var(--cyan)}
+#modal label{display:block;font-size:11px;color:var(--dim);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+#modal input,#modal textarea,#modal select{width:100%}
+.modalfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.btn{background:var(--panel2);border:1px solid var(--edge2);color:var(--ink);border-radius:6px;padding:8px 16px;font-size:13px}
+.btn.primary{border-color:var(--cyan);color:var(--cyan)}
+.btn.primary:hover{background:color-mix(in srgb,var(--cyan) 12%,transparent)}
+.btn.danger{border-color:var(--red);color:var(--red)}
+
+/* creativity */
+#creat-layout{display:flex;gap:16px;align-items:flex-start}
+#creat-canvas{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.pocket{background:var(--panel);border:1px solid var(--edge);border-radius:10px;overflow:hidden}
+.pocket-header{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--edge);cursor:grab;background:var(--panel2)}
+.pocket-header .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.pocket-header .pname{font-weight:700;font-size:12px;flex:1}
+.pocket-content{min-height:60px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.pchip{background:var(--panel2);border:1px solid var(--edge2);border-left:3px solid var(--cat);border-radius:6px;padding:6px 9px;font-size:12px;cursor:grab;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pchip:hover{border-color:var(--cat)}
+.pchip .x{color:var(--faint);cursor:pointer;font-size:11px}
+.pchip .x:hover{color:var(--red)}
+#creat-side{width:250px;flex:none;background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:12px;position:sticky;top:0;max-height:calc(100vh - 140px);overflow:auto}
+#creat-side h4{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+#creat-side input{width:100%;margin-bottom:8px}
+.ghost{opacity:.4}
+.sortable-drag{opacity:.9}
+
+/* speed run + zen */
+.termwrap{max-width:860px;margin:0 auto;padding:20px;display:flex;flex-direction:column;height:100%}
+#sr-stats{display:flex;gap:24px;color:var(--dim);font-size:12px;margin-bottom:14px}
+#sr-stats b{color:var(--cyan);font-size:18px;display:block}
+#sr-hist{flex:1;overflow:auto;display:flex;flex-direction:column-reverse;gap:4px;padding-bottom:12px}
+.histline{color:var(--dim);font-size:13px}
+.histline b{color:var(--green)}
+.termline{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--edge2);border-radius:8px;padding:6px 12px}
+.termline .ps1{color:var(--cyan);font-weight:700}
+.termline input{flex:1;background:none;border:none;font-size:15px;padding:8px 0}
+#zen{position:absolute;inset:0;background:#000;display:flex;align-items:center;justify-content:center}
+#zen .termline{background:none;border:none;width:min(700px,90vw)}
+#zen input{color:#e8ecf1;font-size:20px}
+#zen .hint{position:fixed;bottom:16px;left:0;right:0;text-align:center;color:#333;font-size:11px}
+
+/* quick session */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.preset{background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:14px}
+.preset h4{color:var(--amber);font-size:13px;margin-bottom:4px}
+.preset .pm{color:var(--dim);font-size:11px;margin-bottom:8px}
+.preset .pp{color:var(--faint);font-size:11px;border-left:2px solid var(--edge2);padding-left:8px;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* explorer */
+.acc{background:var(--panel);border:1px solid var(--edge);border-radius:8px;margin-bottom:10px;overflow:hidden}
+.acc-head{padding:11px 14px;display:flex;justify-content:space-between;cursor:pointer;font-weight:700;font-size:13px}
+.acc-head:hover{background:var(--panel2)}
+.acc-head .n{color:var(--faint);font-weight:400;font-size:11px}
+.acc-body{display:none;border-top:1px solid var(--edge);padding:12px 14px;flex-direction:column;gap:10px}
+.acc.open .acc-body{display:flex}
+.acc-item{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.acc-item .cmd{color:var(--cat);font-weight:700;cursor:pointer;word-break:break-all}
+.acc-item .d{color:var(--dim);font-size:12px;flex:1;min-width:160px}
+
+/* challenge */
+#ch-box{max-width:620px;margin:0 auto;background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:26px;text-align:center}
+#ch-q{font-size:15px;margin:18px 0;min-height:44px}
+#ch-opts{display:grid;gap:8px;margin-top:14px}
+#ch-opts .btn{text-align:left}
+#ch-opts .btn.correct{border-color:var(--green);color:var(--green)}
+#ch-opts .btn.wrong{border-color:var(--red);color:var(--red)}
+#ch-score{display:flex;gap:22px;justify-content:center;color:var(--dim);font-size:12px;margin-bottom:6px}
+#ch-score b{color:var(--amber);font-size:17px;display:block}
+#ch-feedback{min-height:20px;font-size:12px;margin-top:12px}
+
+/* macro */
+#mac-layout{display:flex;gap:16px;align-items:flex-start}
+#mac-list{flex:1;display:flex;flex-direction:column;gap:12px}
+.macro{background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:14px}
+.macro h4{color:var(--violet);font-size:13px}
+.macro .seq{margin:10px 0;display:flex;flex-direction:column;gap:5px;min-height:34px;border:1px dashed var(--edge2);border-radius:8px;padding:8px}
+.macro .seq .pchip{cursor:grab}
+kbd{background:var(--panel2);border:1px solid var(--edge2);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--dim)}
+.helprow{display:flex;gap:10px;align-items:baseline;margin-bottom:8px;font-size:12px;color:var(--dim)}
+/* fill-in-the-blank */
+.fbrow{background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:12px;margin-bottom:10px}
+.fbdesc{color:var(--dim);font-size:12px;margin-bottom:8px}
+.fbline{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:13px}
+.fblit{color:var(--ink);white-space:pre}
+input.blank{padding:3px 6px;border-color:color-mix(in srgb,var(--cyan) 55%,transparent);color:var(--cyan);font-size:13px;width:auto}
+input.blank:focus{border-color:var(--cyan)}
+/* builder */
+#bl-tray{min-height:52px;border:1px dashed var(--edge2);border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;background:var(--panel);align-items:center}
+#bl-tray .pchip{cursor:grab}
+.bl-empty{color:var(--faint);font-size:12px}
+#bl-preview{display:block;background:var(--panel);border:1px solid var(--edge);border-left:3px solid var(--cyan);border-radius:8px;padding:10px 12px;margin:10px 0 18px;color:var(--cyan);font-size:13px;word-break:break-all;min-height:38px;font-family:var(--mono)}
+.bl-group{margin-bottom:12px}
+.bl-group h4{font-size:11px;color:var(--dim);letter-spacing:.5px;margin-bottom:6px}
+.bl-chips{display:flex;flex-wrap:wrap;gap:6px}
+.bl-chips .chip:hover{color:var(--ink);border-color:var(--dim)}
+.pchip.custom{border-left-color:var(--red)}
+@media(max-width:760px){#creat-layout,#mac-layout{flex-direction:column}#creat-side{width:100%;position:static;max-height:240px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<nav id="modebar"></nav>
+<main id="main"></main>
+<div id="toast"></div>
+<div id="modal-bg"><div id="modal"></div></div>
+
+<script>
+/* ═══════════════ COMMAND DATABASE ═══════════════ */
+const CATS = {session:'session', models:'models', config:'config', info:'info', custom:'custom'};
+const BASE_COMMANDS = [
+ {id:'run',      cmd:'ollama run deepseek-r1',            cat:'models',  desc:'Start an interactive DeepSeek-R1 chat session', ex:'ollama run deepseek-r1:8b'},
+ {id:'run70',    cmd:'ollama run deepseek-r1:70b',        cat:'models',  desc:'Run the 70B variant (needs ~40GB+ RAM)', ex:'ollama run deepseek-r1:70b --verbose'},
+ {id:'pull',     cmd:'ollama pull deepseek-r1',           cat:'models',  desc:'Download or update the model without starting a chat', ex:'ollama pull deepseek-r1:14b'},
+ {id:'list',     cmd:'ollama list',                       cat:'models',  desc:'List all models installed locally', ex:'ollama list'},
+ {id:'ps',       cmd:'ollama ps',                         cat:'models',  desc:'Show models currently loaded in memory', ex:'ollama ps'},
+ {id:'stop',     cmd:'ollama stop deepseek-r1',           cat:'models',  desc:'Unload a running model from memory', ex:'ollama stop deepseek-r1'},
+ {id:'rm',       cmd:'ollama rm deepseek-r1',             cat:'models',  desc:'Delete a model from disk', ex:'ollama rm deepseek-r1:70b'},
+ {id:'showm',    cmd:'ollama show deepseek-r1',           cat:'models',  desc:'Show model details (params, template, license)', ex:'ollama show deepseek-r1 --modelfile'},
+ {id:'serve',    cmd:'ollama serve',                      cat:'models',  desc:'Start the Ollama server manually (if not running as a service)', ex:'OLLAMA_HOST=0.0.0.0 ollama serve'},
+ {id:'bye',      cmd:'/bye',                              cat:'session', desc:'Exit the chat session', ex:'/bye'},
+ {id:'clear',    cmd:'/clear',                            cat:'session', desc:'Clear session context — model forgets the conversation', ex:'/clear'},
+ {id:'help',     cmd:'/?',                                cat:'session', desc:'Show help for in-session commands', ex:'/? shortcuts'},
+ {id:'save',     cmd:'/save my-session',                  cat:'session', desc:'Save the current chat as a named model snapshot', ex:'/save vermont-route-notes'},
+ {id:'load',     cmd:'/load my-session',                  cat:'session', desc:'Load a previously saved session', ex:'/load vermont-route-notes'},
+ {id:'multi',    cmd:'"""',                               cat:'session', desc:'Begin/end a multiline message', ex:'"""\\npaste multi-line text here\\n"""'},
+ {id:'temp',     cmd:'/set parameter temperature 0.7',    cat:'config',  desc:'Creativity dial: 0 = deterministic, 1+ = adventurous', ex:'/set parameter temperature 0.2'},
+ {id:'ctx',      cmd:'/set parameter num_ctx 8192',       cat:'config',  desc:'Context window size in tokens (more = more memory use)', ex:'/set parameter num_ctx 16384'},
+ {id:'topp',     cmd:'/set parameter top_p 0.9',          cat:'config',  desc:'Nucleus sampling — lower trims unlikely tokens', ex:'/set parameter top_p 0.5'},
+ {id:'seed',     cmd:'/set parameter seed 42',            cat:'config',  desc:'Fix the random seed for reproducible output', ex:'/set parameter seed 1337'},
+ {id:'npred',    cmd:'/set parameter num_predict 512',    cat:'config',  desc:'Max tokens to generate per reply', ex:'/set parameter num_predict 2048'},
+ {id:'system',   cmd:'/set system "You are..."',          cat:'config',  desc:'Set the system prompt for this session', ex:'/set system "You are a terse senior engineer."'},
+ {id:'fmtjson',  cmd:'/set format json',                  cat:'config',  desc:'Force replies to be valid JSON', ex:'/set format json'},
+ {id:'nofmt',    cmd:'/set noformat',                     cat:'config',  desc:'Disable forced output format', ex:'/set noformat'},
+ {id:'verbose',  cmd:'/set verbose',                      cat:'config',  desc:'Show timing and token stats after each reply', ex:'/set verbose'},
+ {id:'quiet',    cmd:'/set quiet',                        cat:'config',  desc:'Hide timing and token stats', ex:'/set quiet'},
+ {id:'nothink',  cmd:'/set nothink',                      cat:'config',  desc:'Disable reasoning trace (R1 thinking models)', ex:'/set think  — to re-enable'},
+ {id:'shinfo',   cmd:'/show info',                        cat:'info',    desc:'Model architecture, parameter count, quantization', ex:'/show info'},
+ {id:'shparam',  cmd:'/show parameters',                  cat:'info',    desc:'Current session parameters', ex:'/show parameters'},
+ {id:'shsys',    cmd:'/show system',                      cat:'info',    desc:'Current system prompt', ex:'/show system'},
+ {id:'shtmpl',   cmd:'/show template',                    cat:'info',    desc:'Prompt template the model uses', ex:'/show template'},
+ {id:'ctrld',    cmd:'Ctrl+D',                            cat:'session', kind:'key', desc:'Exit the session (EOF). Press it at an empty prompt — nothing to paste', ex:'Press Ctrl+D at an empty prompt'},
+ {id:'ctrlc',    cmd:'Ctrl+C',                            cat:'session', kind:'key', desc:'Interrupt the current generation without leaving the session', ex:'Press while the model is streaming'},
+ {id:'ctrll',    cmd:'Ctrl+L',                            cat:'session', kind:'key', desc:'Clear the terminal screen — context is untouched', ex:'Press any time at the prompt'},
+];
+
+/* additional harnesses */
+const EXTRA_COMMANDS=[
+ /* llama.cpp */
+ {id:'lc-server',harness:'llamacpp',cat:'models', cmd:'llama-server -m model.gguf --port 8080', desc:'Serve a GGUF model over HTTP (OpenAI-compatible)', ex:'llama-server -m deepseek-r1-8b.Q4_K_M.gguf --port 8080 -ngl 99'},
+ {id:'lc-cli',   harness:'llamacpp',cat:'models', cmd:'llama-cli -m model.gguf -cnv', desc:'Interactive chat with a GGUF model in the terminal', ex:'llama-cli -m model.gguf -cnv --temp 0.7'},
+ {id:'lc-p',     harness:'llamacpp',cat:'session',cmd:'llama-cli -m model.gguf -p "prompt"', desc:'One-shot generation from a prompt, then exit', ex:'llama-cli -m model.gguf -p "Explain RAG in one paragraph"'},
+ {id:'lc-ngl',   harness:'llamacpp',cat:'config', cmd:'-ngl 99', desc:'Offload N layers to GPU (99 = everything that fits)', ex:'llama-server -m model.gguf -ngl 35'},
+ {id:'lc-ctx',   harness:'llamacpp',cat:'config', cmd:'-c 8192', desc:'Context window size flag', ex:'-c 16384'},
+ {id:'lc-temp',  harness:'llamacpp',cat:'config', cmd:'--temp 0.7', desc:'Sampling temperature flag', ex:'--temp 0.2'},
+ {id:'lc-bench', harness:'llamacpp',cat:'info',   cmd:'llama-bench -m model.gguf', desc:'Benchmark tokens/sec for a model on this machine', ex:'llama-bench -m model.gguf -ngl 99'},
+ {id:'lc-quant', harness:'llamacpp',cat:'models', cmd:'llama-quantize in.gguf out.gguf Q4_K_M', desc:'Quantize a GGUF down to a smaller precision', ex:'llama-quantize f16.gguf q4.gguf Q4_K_M'},
+ /* LM Studio */
+ {id:'lms-get',   harness:'lmstudio',cat:'models',cmd:'lms get <search>', desc:'Search for and download a model', ex:'lms get deepseek-r1'},
+ {id:'lms-ls',    harness:'lmstudio',cat:'models',cmd:'lms ls', desc:'List downloaded models', ex:'lms ls'},
+ {id:'lms-load',  harness:'lmstudio',cat:'models',cmd:'lms load <model>', desc:'Load a model into memory', ex:'lms load deepseek-r1-distill-qwen-7b'},
+ {id:'lms-ps',    harness:'lmstudio',cat:'models',cmd:'lms ps', desc:'Show currently loaded models', ex:'lms ps'},
+ {id:'lms-unload',harness:'lmstudio',cat:'models',cmd:'lms unload --all', desc:'Unload all loaded models', ex:'lms unload --all'},
+ {id:'lms-server',harness:'lmstudio',cat:'models',cmd:'lms server start', desc:'Start the local OpenAI-compatible server', ex:'lms server start --port 1234'},
+ {id:'lms-status',harness:'lmstudio',cat:'info',  cmd:'lms server status', desc:'Check whether the server is running', ex:'lms server status'},
+ {id:'lms-log',   harness:'lmstudio',cat:'info',  cmd:'lms log stream', desc:'Stream server logs live', ex:'lms log stream'},
+ /* vLLM */
+ {id:'vl-serve', harness:'vllm',cat:'models',cmd:'vllm serve <hf-model>', desc:'Serve a Hugging Face model with an OpenAI-compatible API', ex:'vllm serve deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'},
+ {id:'vl-tp',    harness:'vllm',cat:'config',cmd:'--tensor-parallel-size 2', desc:'Split the model across N GPUs', ex:'vllm serve <model> --tensor-parallel-size 2'},
+ {id:'vl-len',   harness:'vllm',cat:'config',cmd:'--max-model-len 8192', desc:'Cap context length to save VRAM', ex:'--max-model-len 4096'},
+ {id:'vl-mem',   harness:'vllm',cat:'config',cmd:'--gpu-memory-utilization 0.9', desc:'Fraction of VRAM vLLM may claim', ex:'--gpu-memory-utilization 0.8'},
+ {id:'vl-models',harness:'vllm',cat:'info',  cmd:'curl localhost:8000/v1/models', desc:'List models the server is exposing', ex:'curl localhost:8000/v1/models'},
+ /* Claude Code */
+ {id:'cc-start',  harness:'claude',cat:'session',cmd:'claude', desc:'Start an interactive Claude Code session in this directory', ex:'claude'},
+ {id:'cc-print',  harness:'claude',cat:'session',cmd:'claude -p "prompt"', desc:'Headless one-shot: print the answer and exit', ex:'claude -p "summarize this repo"'},
+ {id:'cc-cont',   harness:'claude',cat:'session',cmd:'claude --continue', desc:'Resume the most recent session', ex:'claude --continue'},
+ {id:'cc-clear',  harness:'claude',cat:'session',cmd:'/clear', desc:'Clear conversation context', ex:'/clear'},
+ {id:'cc-compact',harness:'claude',cat:'config', cmd:'/compact', desc:'Compress the conversation to free context', ex:'/compact focus on the auth bug'},
+ {id:'cc-model',  harness:'claude',cat:'config', cmd:'/model', desc:'View or switch the active model', ex:'/model'},
+ {id:'cc-cost',   harness:'claude',cat:'info',   cmd:'/cost', desc:'Show token usage for this session', ex:'/cost'},
+ /* universal */
+ {id:'u-smi',harness:'universal',cat:'info',cmd:'nvidia-smi', desc:'GPU utilization, VRAM, temperature (NVIDIA)', ex:'watch -n1 nvidia-smi'},
+];
+BASE_COMMANDS.push(...EXTRA_COMMANDS);
+BASE_COMMANDS.forEach(c=>{if(!c.harness)c.harness=(c.kind==='key')?'universal':'ollama';});
+
+const HARNESSES=[
+ {id:'all',name:'ALL HARNESSES'},
+ {id:'ollama',name:'OLLAMA'},
+ {id:'llamacpp',name:'LLAMA.CPP'},
+ {id:'lmstudio',name:'LM STUDIO'},
+ {id:'vllm',name:'VLLM'},
+ {id:'claude',name:'CLAUDE CODE'},
+];
+function harnessMatch(h){const hz=Store.data.harness||'all';
+  return hz==='all'||!h||h==='universal'||h===hz;}
+
+/* ═══════════════ STATE (in-memory + export/import) ═══════════════
+   NOTE: localStorage is unavailable in this environment. State lives in
+   memory for the session; use Settings → Export/Import to persist. */
+const Store = {
+  data: {
+    activeMode:'control',
+    theme:'dark',
+    harness:'all',
+    edit:{overrides:{},custom:[]},
+    creativity:{pockets:[
+      {id:'p1',name:'ESSENTIAL',color:'#4fc3f7',commands:['run','bye','clear','help']},
+      {id:'p2',name:'TUNING',color:'#66bb6a',commands:['temp','ctx','system']},
+      {id:'p3',name:'MODEL OPS',color:'#ffb74d',commands:['list','ps','pull','stop']},
+      {id:'p4',name:'MY FAVORITES',color:'#b388ff',commands:[]},
+    ]},
+    quickSession:{presets:[
+      {id:'q1',name:'Python Expert',model:'deepseek-r1',prompt:'You are a senior Python engineer. Give working code first, brief explanation second. Prefer the standard library.'},
+      {id:'q2',name:'Code Debugger',model:'deepseek-r1',prompt:'You are a debugging partner. Ask for the error and the code, then reason step by step to the root cause before proposing a fix.'},
+      {id:'q3',name:'Creative Writer',model:'deepseek-r1',prompt:'You are a fiction co-writer with a sparse, literary style. Match the tone of whatever I paste.'},
+      {id:'q4',name:'Summarizer',model:'deepseek-r1',prompt:'Summarize any pasted text into five tight bullets plus one-sentence takeaway. No preamble.'},
+    ]},
+    speedrun:{history:[],stamps:[]},
+    explorer:{open:{g0:true}},
+    challenge:{correct:0,incorrect:0,streak:0},
+    macro:{macros:[{id:'m1',name:'Fresh tuned session',seq:['run','temp','ctx','verbose']}]},
+    controlCenter:{query:'',cat:'all'},
+    builder:{seq:[]},
+  },
+  save(){ /* in-memory only; export via Settings */ },
+  export(){
+    const blob=new Blob([JSON.stringify(this.data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='mode_studio_config.json';a.click();URL.revokeObjectURL(a.href);
+  },
+  import(file){
+    const r=new FileReader();
+    r.onload=()=>{try{
+      const d=JSON.parse(r.result);
+      this.data=Object.assign(this.data,d);
+      toast('Config imported','ok');
+      ModeStudio.switchMode(this.data.activeMode||'control');
+      applyTheme();
+    }catch(e){toast('Import failed: not valid JSON','err');}};
+    r.readAsText(file);
+  }
+};
+
+/* effective command list = base − overrides + custom */
+function allCommands(){
+  const ov=Store.data.edit.overrides;
+  const base=BASE_COMMANDS.map(c=>ov[c.id]?Object.assign({},c,ov[c.id]):c);
+  return base.concat(Store.data.edit.custom).filter(c=>harnessMatch(c.harness));
+}
+function cmdById(id){return allCommands().find(c=>c.id===id);}
+
+/* copy that respects command kind: key-type commands are pressed, never pasted */
+function copyCmd(c){
+  if(!c)return;
+  if(c.kind==='key'){toast('<b>keyboard shortcut</b> — press '+esc(c.cmd)+' in the terminal; nothing to paste');return;}
+  copyText(c.cmd);
+}
+
+/* fill-in-the-blank templates: strings are literals, objects are typed blanks */
+const TEMPLATES=[
+ {base:'run',   parts:['ollama run ',{n:'model',h:'deepseek-r1[:tag]',d:'deepseek-r1'}]},
+ {base:'pull',  parts:['ollama pull ',{n:'model',h:'model[:tag]',d:'deepseek-r1'}]},
+ {base:'stop',  parts:['ollama stop ',{n:'model',h:'loaded model',d:'deepseek-r1'}]},
+ {base:'rm',    parts:['ollama rm ',{n:'model',h:'model to delete',d:''}]},
+ {base:'showm', parts:['ollama show ',{n:'model',h:'model',d:'deepseek-r1'}]},
+ {base:'temp',  parts:['/set parameter temperature ',{n:'value',h:'0.0\u20132.0',d:'0.7'}]},
+ {base:'ctx',   parts:['/set parameter num_ctx ',{n:'tokens',h:'e.g. 8192',d:'8192'}]},
+ {base:'topp',  parts:['/set parameter top_p ',{n:'value',h:'0\u20131',d:'0.9'}]},
+ {base:'seed',  parts:['/set parameter seed ',{n:'seed',h:'integer',d:'42'}]},
+ {base:'npred', parts:['/set parameter num_predict ',{n:'tokens',h:'max tokens',d:'512'}]},
+ {base:'system',parts:['/set system "',{n:'prompt',h:'who the model should be',d:'You are a terse senior engineer.'},'"']},
+ {base:'save',  parts:['/save ',{n:'name',h:'session name',d:'my-session'}]},
+ {base:'load',  parts:['/load ',{n:'name',h:'session name',d:'my-session'}]},
+ {base:null, desc:'Call the local API directly \u2014 paste your key into the header blank if you run an auth proxy',
+  parts:['curl http://localhost:11434/api/generate -H "Authorization: Bearer ',{n:'key',h:'API key (if proxied)',d:''},
+         '" -d \'{"model":"',{n:'model',h:'model',d:'deepseek-r1'},'","prompt":"',{n:'prompt',h:'your prompt',d:'Hello'},'"}\'']},
+ {base:'lc-server',harness:'llamacpp',parts:['llama-server -m ',{n:'gguf',h:'path/to/model.gguf',d:'model.gguf'},' --port ',{n:'port',h:'port',d:'8080'},' -ngl ',{n:'layers',h:'GPU layers (99 = all)',d:'99'}]},
+ {base:'lms-load',harness:'lmstudio',parts:['lms load ',{n:'model',h:'model name',d:'deepseek-r1-distill-qwen-7b'}]},
+ {base:'vl-serve',harness:'vllm',parts:['vllm serve ',{n:'model',h:'org/model',d:'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'},' --max-model-len ',{n:'len',h:'context cap',d:'8192'}]},
+ {base:'cc-print',harness:'claude',parts:['claude -p "',{n:'prompt',h:'task',d:'summarize this repo'},'"']},
+ {base:null,harness:'universal',desc:'OpenAI-compatible chat call \u2014 llama.cpp (8080), LM Studio (1234), vLLM (8000); paste your key where the server needs one',
+  parts:['curl http://localhost:',{n:'port',h:'8080 / 1234 / 8000',d:'8080'},'/v1/chat/completions -H "Authorization: Bearer ',{n:'key',h:'API key or none',d:'none'},
+         '" -H "Content-Type: application/json" -d \'{"model":"',{n:'model',h:'served model',d:'local'},'","messages":[{"role":"user","content":"',{n:'message',h:'your message',d:'Hello'},'"}]}\'']},
+];
+TEMPLATES.forEach(t=>{if(!t.harness)t.harness='ollama';});
+
+/* builder chunk palette, grouped by role in the command */
+const CHUNK_GROUPS=[
+ {name:'BASE',chunks:['ollama','/set','/show','curl']},
+ {name:'ACTION',chunks:['run','pull','stop','rm','show','list','ps','cp','serve']},
+ {name:'MODEL',chunks:['deepseek-r1','deepseek-r1:8b','deepseek-r1:14b','deepseek-r1:32b','deepseek-r1:70b']},
+ {name:'SETTING',chunks:['parameter','system','format']},
+ {name:'PARAMETER',chunks:['temperature','num_ctx','top_p','seed','num_predict']},
+ {name:'VALUE',chunks:['0.2','0.7','1.0','42','512','2048','8192','16384','json']},
+ {name:'FLAG',chunks:['--verbose','--modelfile','--insecure']},
+ {name:'OLLAMA API',harness:'ollama',chunks:['http://localhost:11434/api/generate','http://localhost:11434/api/chat','-d',
+  '{"model":"deepseek-r1","prompt":"Hello"}','-H','"Authorization: Bearer YOUR_KEY"']},
+ {name:'LLAMA.CPP',harness:'llamacpp',chunks:['llama-server','llama-cli','llama-bench','-m','model.gguf','-cnv','-p','"your prompt"','-ngl','99','-c','--temp','--port','8080']},
+ {name:'LM STUDIO',harness:'lmstudio',chunks:['lms','get','load','unload','ls','ps','server','start','status','log','stream','--all','--port','1234']},
+ {name:'VLLM',harness:'vllm',chunks:['vllm','serve','deepseek-ai/DeepSeek-R1-Distill-Qwen-7B','--tensor-parallel-size','2','--max-model-len','--gpu-memory-utilization','0.9']},
+ {name:'CLAUDE CODE',harness:'claude',chunks:['claude','-p','--continue','--append-system-prompt','"You are..."','/compact','/model','/cost']},
+ {name:'OPENAI-COMPAT API',harness:'universal',chunks:['curl','http://localhost:8080/v1/chat/completions','http://localhost:1234/v1/chat/completions','http://localhost:8000/v1/chat/completions',
+  '-H','"Content-Type: application/json"','"Authorization: Bearer YOUR_KEY"','-d','{"model":"local","messages":[{"role":"user","content":"Hello"}]}']},
+];
+CHUNK_GROUPS.forEach(g=>{if(!g.harness)g.harness='ollama';});
+
+/* ═══════════════ UTILITIES ═══════════════ */
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+let toastTimer;
+function toast(msg,kind){
+  const t=document.getElementById('toast');
+  t.style.borderColor=kind==='err'?'var(--red)':'var(--green)';
+  t.innerHTML=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
+}
+function copyText(txt){
+  const done=()=>toast('<b>copied</b> → '+esc(txt));
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallback());
+  }else fallback();
+  function fallback(){
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+    ta.select();try{document.execCommand('copy');done();}catch(e){toast('Copy failed — select manually','err');}
+    ta.remove();
+  }
+}
+function applyTheme(){document.body.classList.toggle('light',Store.data.theme==='light');}
+
+/* modal helper */
+function openModal(html,onMount){
+  const bg=document.getElementById('modal-bg'),m=document.getElementById('modal');
+  m.innerHTML=html;bg.classList.add('open');if(onMount)onMount(m);
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
+
+/* ═══════════════ MODE MANAGER ═══════════════ */
+const ModeStudio={
+  modes:{},order:[],activeMode:null,
+  registerMode(m){this.modes[m.id]=m;this.order.push(m.id);},
+  switchMode(id){
+    if(!this.modes[id])id='control';
+    const cur=this.modes[this.activeMode];
+    if(cur&&cur.destroy)cur.destroy();
+    this.activeMode=id;Store.data.activeMode=id;
+    const mode=this.modes[id];
+    document.getElementById('main').innerHTML=mode.render();
+    if(mode.init)mode.init();
+    document.querySelectorAll('.mtab').forEach(b=>b.classList.toggle('active',b.dataset.mode===id));
+  },
+  buildBar(){
+    const bar=document.getElementById('modebar');
+    bar.innerHTML='<div class="brand">MODE_STUDIO <small>v5.0</small></div>';
+    const sel=document.createElement('select');sel.id='harness-sel';sel.title='Active harness';
+    HARNESSES.forEach(h=>{const o=document.createElement('option');o.value=h.id;o.textContent=h.name;sel.appendChild(o);});
+    sel.value=Store.data.harness||'all';
+    sel.onchange=()=>{Store.data.harness=sel.value;ModeStudio.switchMode(ModeStudio.activeMode);};
+    bar.appendChild(sel);
+    this.order.forEach((id,i)=>{
+      const m=this.modes[id];
+      const b=document.createElement('button');
+      b.className='mtab';b.dataset.mode=id;
+      b.innerHTML=esc(m.icon)+' '+esc(m.name)+(i<9?' <span class="k">^'+(i+1)+'</span>':'');
+      b.onclick=()=>this.switchMode(id);
+      bar.appendChild(b);
+    });
+    const sp=document.createElement('div');sp.className='spacer';bar.appendChild(sp);
+    const help=document.createElement('button');help.className='iconbtn';help.textContent='?';help.title='Help';
+    help.onclick=showHelp;bar.appendChild(help);
+    const st=document.createElement('button');st.className='iconbtn';st.textContent='⚙';st.title='Settings';
+    st.onclick=showSettings;bar.appendChild(st);
+  }
+};
+
+/* ═══════════════ MODE: CONTROL CENTER ═══════════════ */
+ModeStudio.registerMode({
+  id:'control',name:'CONTROL',icon:'▣',
+  render(){
+    const s=Store.data.controlCenter;
+    const cats=['all','session','models','config','info','custom'];
+    return `<div class="wrap">
+      <h2 class="modehead">CONTROL CENTER</h2>
+      <p class="modesub">Every command, searchable. Click a command to copy it.</p>
+      <div class="toolrow">
+        <input type="text" id="cc-q" placeholder="search commands…  (Ctrl+K)" value="${esc(s.query)}">
+        ${cats.map(c=>`<button class="chip ${s.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}
+      </div>
+      <div class="grid" id="cc-grid"></div>
+    </div>`;
+  },
+  init(){
+    const s=Store.data.controlCenter;
+    const draw=()=>{
+      const q=s.query.toLowerCase();
+      const list=allCommands().filter(c=>
+        (s.cat==='all'||c.cat===s.cat)&&
+        (!q||c.cmd.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q)));
+      document.getElementById('cc-grid').innerHTML=list.map(c=>`
+        <div class="card c-${c.cat}" data-id="${c.id}">
+          <div class="cmd">${c.kind==='key'?'⌨ ':''}${esc(c.cmd)}</div>
+          <div class="desc">${esc(c.desc)}</div>
+          <div class="ex">ex: ${esc(c.ex||'—')}</div>
+          <div class="cardfoot"><span><span class="badge">${c.cat}</span> <span class="badge" style="--cat:var(--faint)">${esc(c.harness||'any')}</span></span>
+            <button class="minibtn exbtn">example</button></div>
+        </div>`).join('')||'<p style="color:var(--faint)">No matches.</p>';
+      document.querySelectorAll('#cc-grid .card').forEach(el=>{
+        el.querySelector('.cmd').onclick=()=>copyCmd(cmdById(el.dataset.id));});
+      document.querySelectorAll('#cc-grid .exbtn').forEach(el=>el.onclick=e=>e.target.closest('.card').classList.toggle('showex'));
+    };
+    document.getElementById('cc-q').addEventListener('input',e=>{s.query=e.target.value;draw();});
+    document.querySelectorAll('.toolrow .chip').forEach(ch=>ch.onclick=()=>{
+      s.cat=ch.dataset.cat;
+      document.querySelectorAll('.toolrow .chip').forEach(x=>x.classList.toggle('on',x===ch));
+      draw();
+    });
+    draw();
+  }
+});
+
+/* ═══════════════ MODE: CREATIVITY (pockets) ═══════════════ */
+let creatSortables=[];
+ModeStudio.registerMode({
+  id:'creativity',name:'CREATE',icon:'◫',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">CREATIVITY MODE</h2>
+    <p class="modesub">Organize commands into pockets. Drag pockets to reorder; drag chips between pockets; drag from the library to add. Click a chip to copy.</p>
+    <div class="toolrow"><button class="btn primary" id="cr-new">+ New pocket</button></div>
+    <div id="creat-layout">
+      <div id="creat-canvas"></div>
+      <div id="creat-side"><h4>Command library</h4>
+        <input type="text" id="cr-filter" placeholder="filter…">
+        <div id="cr-lib" class="pocket-content" style="padding:0"></div>
+      </div>
+    </div></div>`;},
+  init(){
+    const st=Store.data.creativity;
+    const canvas=document.getElementById('creat-canvas');
+    const lib=document.getElementById('cr-lib');
+    const chip=(c)=>`<div class="pchip c-${c.cat}" data-id="${c.id}"><span class="t">${esc(c.cmd)}</span><span class="x" title="remove">✕</span></div>`;
+    const drawLib=()=>{
+      const q=(document.getElementById('cr-filter').value||'').toLowerCase();
+      lib.innerHTML=allCommands().filter(c=>!q||c.cmd.toLowerCase().includes(q))
+        .map(c=>`<div class="pchip c-${c.cat}" data-id="${c.id}"><span class="t">${esc(c.cmd)}</span></div>`).join('');
+      new Sortable(lib,{group:{name:'commands',pull:'clone',put:false},sort:false,animation:150,ghostClass:'ghost'});
+    };
+    const draw=()=>{
+      creatSortables.forEach(s=>s.destroy());creatSortables=[];
+      canvas.innerHTML=st.pockets.map(p=>`
+        <div class="pocket" data-id="${p.id}">
+          <div class="pocket-header"><span class="dot" style="background:${esc(p.color)}"></span>
+            <span class="pname">${esc(p.name)}</span>
+            <button class="minibtn edit">edit</button>
+            <button class="minibtn danger del">del</button></div>
+          <div class="pocket-content">${p.commands.map(id=>{const c=cmdById(id);return c?chip(c):'';}).join('')}</div>
+        </div>`).join('');
+      creatSortables.push(new Sortable(canvas,{animation:150,handle:'.pocket-header',ghostClass:'ghost',
+        onEnd:()=>{const ids=[...canvas.children].map(el=>el.dataset.id);
+          st.pockets.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id));}}));
+      canvas.querySelectorAll('.pocket').forEach(pel=>{
+        const pid=pel.dataset.id;
+        creatSortables.push(new Sortable(pel.querySelector('.pocket-content'),{
+          group:'commands',animation:150,ghostClass:'ghost',
+          onSort:()=>syncPocket(pid,pel),onAdd:()=>syncPocket(pid,pel)}));
+        pel.querySelector('.del').onclick=()=>{
+          if(confirm('Delete pocket "'+cmdSafe(pid)+'"?')){st.pockets=st.pockets.filter(p=>p.id!==pid);draw();}};
+        pel.querySelector('.edit').onclick=()=>editPocket(pid);
+      });
+      bindChips();
+    };
+    const cmdSafe=pid=>{const p=st.pockets.find(x=>x.id===pid);return p?p.name:'';};
+    const syncPocket=(pid,pel)=>{
+      const p=st.pockets.find(x=>x.id===pid);if(!p)return;
+      p.commands=[...pel.querySelectorAll('.pchip')].map(el=>el.dataset.id);
+      bindChips();
+    };
+    const bindChips=()=>{
+      canvas.querySelectorAll('.pchip').forEach(el=>{
+        el.querySelector('.t').onclick=()=>copyCmd(cmdById(el.dataset.id));
+        const x=el.querySelector('.x');
+        if(x)x.onclick=(e)=>{e.stopPropagation();
+          const pel=el.closest('.pocket');el.remove();syncPocket(pel.dataset.id,pel);};
+      });
+    };
+    const editPocket=(pid)=>{
+      const p=st.pockets.find(x=>x.id===pid);if(!p)return;
+      openModal(`<h3>Edit pocket</h3>
+        <label>Name</label><input id="pk-name" value="${esc(p.name)}">
+        <label>Color</label><input id="pk-color" type="color" value="${esc(p.color)}" style="height:40px;padding:2px">
+        <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" id="pk-save">Save</button></div>`,
+        m=>m.querySelector('#pk-save').onclick=()=>{
+          p.name=m.querySelector('#pk-name').value||p.name;
+          p.color=m.querySelector('#pk-color').value;closeModal();draw();});
+    };
+    document.getElementById('cr-new').onclick=()=>{
+      openModal(`<h3>New pocket</h3>
+        <label>Name</label><input id="pk-name" placeholder="e.g. DEBUG KIT">
+        <label>Color</label><input id="pk-color" type="color" value="#b388ff" style="height:40px;padding:2px">
+        <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" id="pk-save">Create</button></div>`,
+        m=>m.querySelector('#pk-save').onclick=()=>{
+          st.pockets.push({id:'p'+Date.now(),name:m.querySelector('#pk-name').value||'POCKET',
+            color:m.querySelector('#pk-color').value,commands:[]});
+          closeModal();draw();});
+    };
+    document.getElementById('cr-filter').addEventListener('input',drawLib);
+    draw();drawLib();
+  },
+  destroy(){creatSortables.forEach(s=>s.destroy());creatSortables=[];}
+});
+
+/* ═══════════════ MODE: SPEED RUN ═══════════════ */
+ModeStudio.registerMode({
+  id:'speedrun',name:'SPEED',icon:'≫',
+  render(){return `<div class="termwrap">
+    <h2 class="modehead">SPEED RUN</h2>
+    <p class="modesub">Type, Enter to copy, repeat. Up/Down recalls history. Autocomplete from the database.</p>
+    <div id="sr-stats"><div><b id="sr-cpm">0</b>copies/min</div><div><b id="sr-total">0</b>total this run</div></div>
+    <div id="sr-hist"></div>
+    <div class="termline"><span class="ps1">deepseek❯</span>
+      <input id="sr-in" list="sr-dl" autocomplete="off" spellcheck="false">
+      <datalist id="sr-dl">${allCommands().filter(c=>c.kind!=='key').map(c=>`<option value="${esc(c.cmd)}">`).join('')}</datalist>
+    </div></div>`;},
+  init(){
+    const st=Store.data.speedrun;let hi=-1;
+    const inp=document.getElementById('sr-in');
+    const hist=document.getElementById('sr-hist');
+    const drawHist=()=>{hist.innerHTML=st.history.slice(-60).reverse()
+      .map(h=>`<div class="histline"><b>✓</b> ${esc(h)}</div>`).join('');};
+    const stats=()=>{
+      const now=Date.now();st.stamps=st.stamps.filter(t=>now-t<60000);
+      document.getElementById('sr-cpm').textContent=st.stamps.length;
+      document.getElementById('sr-total').textContent=st.history.length;};
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&inp.value.trim()){
+        const v=inp.value.trim();copyText(v);
+        st.history.push(v);st.stamps.push(Date.now());
+        inp.value='';hi=-1;drawHist();stats();
+      }else if(e.key==='ArrowUp'){e.preventDefault();
+        if(st.history.length){hi=hi<0?st.history.length-1:Math.max(0,hi-1);inp.value=st.history[hi];}}
+      else if(e.key==='ArrowDown'){e.preventDefault();
+        if(hi>=0){hi=Math.min(st.history.length-1,hi+1);inp.value=st.history[hi];
+          if(hi===st.history.length-1)hi=-1,inp.value='';}}
+    });
+    this._tick=setInterval(stats,3000);
+    drawHist();stats();inp.focus();
+  },
+  destroy(){clearInterval(this._tick);}
+});
+
+/* ═══════════════ MODE: QUICK SESSION ═══════════════ */
+ModeStudio.registerMode({
+  id:'quick',name:'LAUNCH',icon:'▶',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">QUICK SESSION</h2>
+    <p class="modesub">Presets copy a ready-to-paste launch snippet: the run command plus the /set system line.</p>
+    <div class="toolrow"><button class="btn primary" id="qs-new">+ New preset</button></div>
+    <div class="pgrid" id="qs-grid"></div></div>`;},
+  init(){
+    const st=Store.data.quickSession;
+    const grid=document.getElementById('qs-grid');
+    const RUNNERS={
+      ollama:p=>`ollama run ${p.model}\n/set system "${p.prompt.replace(/"/g,'\\"')}"`,
+      llamacpp:p=>`llama-cli -m ${p.model} -cnv -sys "${p.prompt.replace(/"/g,'\\"')}"`,
+      lmstudio:p=>`lms load ${p.model}\nlms server start`,
+      vllm:p=>`vllm serve ${p.model}`,
+      claude:p=>`claude --append-system-prompt "${p.prompt.replace(/"/g,'\\"')}"`,
+    };
+    const draw=()=>{
+      grid.innerHTML=st.presets.filter(p=>harnessMatch(p.harness||'ollama')).map(p=>`
+        <div class="preset" data-id="${p.id}">
+          <h4>${esc(p.name)}</h4>
+          <div class="pm">${esc(p.harness||'ollama')} · ${esc(p.model)}</div>
+          <div class="pp">${esc(p.prompt)}</div>
+          <div class="cardfoot">
+            <div><button class="minibtn edit">edit</button> <button class="minibtn danger del">del</button></div>
+            <button class="btn primary launch">▶ Launch</button>
+          </div>
+        </div>`).join('')||'<p style="color:var(--faint)">No presets for this harness yet — add one.</p>';
+      grid.querySelectorAll('.preset').forEach(el=>{
+        const p=st.presets.find(x=>x.id===el.dataset.id);
+        el.querySelector('.launch').onclick=()=>{
+          const run=RUNNERS[p.harness||'ollama']||RUNNERS.ollama;
+          copyText(run(p));
+          toast('<b>launch snippet copied</b> — paste into your terminal');
+        };
+        el.querySelector('.del').onclick=()=>{if(confirm('Delete preset "'+p.name+'"?')){
+          st.presets=st.presets.filter(x=>x.id!==p.id);draw();}};
+        el.querySelector('.edit').onclick=()=>form(p);
+      });
+    };
+    const form=(p)=>{
+      const hzs=['ollama','llamacpp','lmstudio','vllm','claude'];
+      openModal(`<h3>${p?'Edit':'New'} preset</h3>
+        <label>Name</label><input id="qp-name" value="${p?esc(p.name):''}">
+        <label>Harness</label><select id="qp-hz">${hzs.map(h=>
+          `<option ${p&&(p.harness||'ollama')===h?'selected':''}>${h}</option>`).join('')}</select>
+        <label>Model</label><input id="qp-model" value="${p?esc(p.model):'deepseek-r1'}">
+        <label>System prompt</label><textarea id="qp-prompt" rows="4">${p?esc(p.prompt):''}</textarea>
+        <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" id="qp-save">Save</button></div>`,
+        m=>m.querySelector('#qp-save').onclick=()=>{
+          const v={name:m.querySelector('#qp-name').value||'Preset',
+            harness:m.querySelector('#qp-hz').value,
+            model:m.querySelector('#qp-model').value||'deepseek-r1',
+            prompt:m.querySelector('#qp-prompt').value||''};
+          if(p)Object.assign(p,v);else st.presets.push(Object.assign({id:'q'+Date.now()},v));
+          closeModal();draw();});
+    };
+    document.getElementById('qs-new').onclick=()=>form(null);
+    draw();
+  }
+});
+
+/* ═══════════════ MODE: EDIT ═══════════════ */
+ModeStudio.registerMode({
+  id:'edit',name:'EDIT',icon:'✎',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">EDIT MODE</h2>
+    <p class="modesub">Modify any command, add your own, or reset to factory. Changes propagate to every mode.</p>
+    <div class="toolrow">
+      <button class="btn primary" id="ed-new">+ New command</button>
+      <button class="btn danger" id="ed-reset">Reset to defaults</button></div>
+    <div class="grid" id="ed-grid"></div></div>`;},
+  init(){
+    const grid=document.getElementById('ed-grid');
+    const draw=()=>{
+      grid.innerHTML=allCommands().map(c=>`
+        <div class="card c-${c.cat}" data-id="${c.id}">
+          <div class="cmd">${esc(c.cmd)}</div>
+          <div class="desc">${esc(c.desc)}</div>
+          <div class="cardfoot"><span class="badge">${c.cat}</span>
+            <div><button class="minibtn edit">edit</button>
+            ${String(c.id).startsWith('custom-')?'<button class="minibtn danger del">del</button>':''}</div></div>
+        </div>`).join('');
+      grid.querySelectorAll('.card').forEach(el=>{
+        const id=el.dataset.id;
+        el.querySelector('.edit').onclick=()=>form(cmdById(id));
+        const del=el.querySelector('.del');
+        if(del)del.onclick=()=>{Store.data.edit.custom=Store.data.edit.custom.filter(c=>c.id!==id);draw();};
+      });
+    };
+    const form=(c)=>{
+      const hzs=['universal','ollama','llamacpp','lmstudio','vllm','claude'];
+      openModal(`<h3>${c?'Edit':'New'} command</h3>
+        <label>Command</label><input id="ec-cmd" value="${c?esc(c.cmd):''}">
+        <label>Description</label><input id="ec-desc" value="${c?esc(c.desc):''}">
+        <label>Category</label><select id="ec-cat">${Object.keys(CATS).map(k=>
+          `<option ${c&&c.cat===k?'selected':''}>${k}</option>`).join('')}</select>
+        <label>Harness</label><select id="ec-hz">${hzs.map(h=>
+          `<option ${c&&(c.harness||'universal')===h?'selected':''}>${h}</option>`).join('')}</select>
+        <label>Example</label><input id="ec-ex" value="${c?esc(c.ex||''):''}">
+        <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" id="ec-save">Save</button></div>`,
+        m=>m.querySelector('#ec-save').onclick=()=>{
+          const v={cmd:m.querySelector('#ec-cmd').value,desc:m.querySelector('#ec-desc').value,
+            cat:m.querySelector('#ec-cat').value,harness:m.querySelector('#ec-hz').value,
+            ex:m.querySelector('#ec-ex').value};
+          if(!v.cmd){toast('Command text is required','err');return;}
+          if(c){
+            if(String(c.id).startsWith('custom-')){
+              Object.assign(Store.data.edit.custom.find(x=>x.id===c.id),v);
+            }else{Store.data.edit.overrides[c.id]=v;}
+          }else{Store.data.edit.custom.push(Object.assign({id:'custom-'+Date.now()},v));}
+          closeModal();draw();});
+    };
+    document.getElementById('ed-new').onclick=()=>form(null);
+    document.getElementById('ed-reset').onclick=()=>{
+      if(confirm('Clear all overrides and custom commands?')){
+        Store.data.edit={overrides:{},custom:[]};draw();}};
+    draw();
+  }
+});
+
+/* ═══════════════ MODE: ZEN ═══════════════ */
+ModeStudio.registerMode({
+  id:'zen',name:'ZEN',icon:'○',
+  render(){return `<div id="zen">
+    <div class="termline"><span class="ps1" style="color:#4fc3f7">❯</span>
+      <input id="zen-in" autocomplete="off" spellcheck="false"></div>
+    <div class="hint">Enter copies · Esc leaves zen</div></div>`;},
+  init(){
+    const inp=document.getElementById('zen-in');
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&inp.value.trim()){copyText(inp.value.trim());inp.value='';}
+      else if(e.key==='Escape'){ModeStudio.switchMode('control');}
+    });
+    inp.focus();
+  }
+});
+
+/* ═══════════════ MODE: EXPLORER ═══════════════ */
+const TASK_GROUPS=[
+ {id:'g0',name:'Getting started',ids:['pull','run','help','bye']},
+ {id:'g1',name:'Managing models',ids:['list','ps','stop','rm','showm','serve','run70']},
+ {id:'g2',name:'Inside a session',ids:['clear','multi','save','load']},
+ {id:'g3',name:'Tuning output',ids:['temp','topp','npred','seed','fmtjson','nofmt','nothink']},
+ {id:'g4',name:'Context & prompts',ids:['ctx','system','shsys','shtmpl']},
+ {id:'g5',name:'Inspecting state',ids:['shinfo','shparam','verbose','quiet']},
+ {id:'g6',harness:'universal',name:'Keyboard shortcuts (press, don\'t paste)',ids:['ctrlc','ctrll','ctrld']},
+ {id:'h1',harness:'llamacpp',name:'llama.cpp — serve & chat',ids:['lc-server','lc-cli','lc-p','lc-bench','lc-quant']},
+ {id:'h2',harness:'llamacpp',name:'llama.cpp — flags',ids:['lc-ngl','lc-ctx','lc-temp']},
+ {id:'h3',harness:'lmstudio',name:'LM Studio CLI',ids:['lms-get','lms-ls','lms-load','lms-ps','lms-server','lms-status','lms-log','lms-unload']},
+ {id:'h4',harness:'vllm',name:'vLLM serving',ids:['vl-serve','vl-tp','vl-len','vl-mem','vl-models']},
+ {id:'h5',harness:'claude',name:'Claude Code',ids:['cc-start','cc-print','cc-cont','cc-clear','cc-compact','cc-model','cc-cost']},
+ {id:'h6',harness:'universal',name:'System',ids:['u-smi']},
+];
+TASK_GROUPS.forEach(g=>{if(!g.harness)g.harness='ollama';});
+ModeStudio.registerMode({
+  id:'explorer',name:'EXPLORE',icon:'≔',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">EXPLORER</h2>
+    <p class="modesub">Commands grouped by task. Click a command to copy; "ex" reveals a sample.</p>
+    <div class="toolrow"><input type="text" id="ex-q" placeholder="search across groups…"></div>
+    <div id="ex-list"></div></div>`;},
+  init(){
+    const st=Store.data.explorer;
+    const draw=()=>{
+      const q=(document.getElementById('ex-q').value||'').toLowerCase();
+      const visible=TASK_GROUPS.filter(g=>harnessMatch(g.harness));
+      const covered=new Set(visible.flatMap(g=>g.ids));
+      const extra=allCommands().filter(c=>!covered.has(c.id));
+      const groups=visible
+        .concat(extra.length?[{id:'gx',name:'Custom & uncovered',ids:extra.map(c=>c.id)}]:[])
+        .concat([{id:'gz',name:'Index — everything A→Z',
+          ids:allCommands().slice().sort((a,b)=>a.cmd.localeCompare(b.cmd)).map(c=>c.id)}]);
+      document.getElementById('ex-list').innerHTML=groups.map(g=>{
+        const cmds=g.ids.map(cmdById).filter(Boolean)
+          .filter(c=>!q||c.cmd.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q));
+        if(!cmds.length)return '';
+        const open=q?true:!!st.open[g.id];
+        return `<div class="acc ${open?'open':''}" data-id="${g.id}">
+          <div class="acc-head"><span>${esc(g.name)}</span><span class="n">${cmds.length} cmds</span></div>
+          <div class="acc-body">${cmds.map(c=>`
+            <div class="acc-item c-${c.cat}" data-id="${c.id}">
+              <span class="cmd">${c.kind==='key'?'⌨ ':''}${esc(c.cmd)}</span>
+              <span class="d">${esc(c.desc)}</span>
+              <button class="minibtn ex" data-ex="${esc(c.ex||'')}">ex</button>
+            </div>`).join('')}</div></div>`;
+      }).join('');
+      document.querySelectorAll('.acc-head').forEach(h=>h.onclick=()=>{
+        const acc=h.closest('.acc');acc.classList.toggle('open');
+        st.open[acc.dataset.id]=acc.classList.contains('open');});
+      document.querySelectorAll('.acc .cmd').forEach(el=>el.onclick=()=>copyCmd(cmdById(el.closest('.acc-item').dataset.id)));
+      document.querySelectorAll('.acc .ex').forEach(b=>b.onclick=()=>toast('<b>example</b> — '+esc(b.dataset.ex||'none')));
+    };
+    document.getElementById('ex-q').addEventListener('input',draw);
+    draw();
+  }
+});
+
+/* ═══════════════ MODE: CHALLENGE ═══════════════ */
+ModeStudio.registerMode({
+  id:'challenge',name:'TRAIN',icon:'◎',
+  render(){return `<div class="wrap"><div id="ch-box">
+    <h2 class="modehead">CHALLENGE</h2>
+    <div id="ch-score"><div><b id="ch-c">0</b>correct</div><div><b id="ch-w">0</b>missed</div><div><b id="ch-s">0</b>streak</div></div>
+    <div class="toolrow" style="justify-content:center">
+      <button class="chip on" data-g="flash">flashcard</button>
+      <button class="chip" data-g="mc">multiple choice</button>
+      <button class="chip" data-g="type">speed type</button></div>
+    <div id="ch-q"></div>
+    <div id="ch-area"></div>
+    <div id="ch-feedback"></div>
+    <div class="modalfoot" style="justify-content:center"><button class="btn" id="ch-next">Next →</button></div>
+  </div></div>`;},
+  init(){
+    const st=Store.data.challenge;let game='flash',cur=null,t0=0;
+    const S=()=>{document.getElementById('ch-c').textContent=st.correct;
+      document.getElementById('ch-w').textContent=st.incorrect;
+      document.getElementById('ch-s').textContent=st.streak;};
+    const fb=(ok,msg)=>{const f=document.getElementById('ch-feedback');
+      f.style.color=ok?'var(--green)':'var(--red)';f.textContent=msg;
+      ok?(st.correct++,st.streak++):(st.incorrect++,st.streak=0);S();};
+    const pick=()=>{const l=allCommands();return l[Math.floor(Math.random()*l.length)];};
+    const norm=s=>s.trim().toLowerCase().replace(/\s+/g,' ');
+    const next=()=>{
+      cur=pick();t0=Date.now();
+      document.getElementById('ch-feedback').textContent='';
+      const area=document.getElementById('ch-area');
+      if(game==='flash'){
+        document.getElementById('ch-q').textContent='Which command: "'+cur.desc+'"';
+        area.innerHTML='<input id="ch-in" placeholder="type the command…" style="width:100%">';
+        wire();
+      }else if(game==='mc'){
+        document.getElementById('ch-q').textContent='"'+cur.desc+'"';
+        const opts=[cur];while(opts.length<4){const o=pick();if(!opts.find(x=>x.id===o.id))opts.push(o);}
+        opts.sort(()=>Math.random()-.5);
+        area.innerHTML='<div id="ch-opts">'+opts.map(o=>
+          `<button class="btn" data-id="${o.id}">${esc(o.cmd)}</button>`).join('')+'</div>';
+        area.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+          const ok=b.dataset.id===cur.id;
+          b.classList.add(ok?'correct':'wrong');
+          if(!ok)area.querySelector(`[data-id="${cur.id}"]`).classList.add('correct');
+          fb(ok,ok?'Correct.':'It was: '+cur.cmd);
+          area.querySelectorAll('button').forEach(x=>x.disabled=true);});
+      }else{
+        document.getElementById('ch-q').innerHTML='Type exactly: <b style="color:var(--cyan)">'+esc(cur.cmd)+'</b>';
+        area.innerHTML='<input id="ch-in" placeholder="go…" style="width:100%">';
+        wire(true);
+      }
+      const i=document.getElementById('ch-in');if(i)i.focus();
+    };
+    const wire=(timed)=>{
+      document.getElementById('ch-in').addEventListener('keydown',e=>{
+        if(e.key!=='Enter')return;
+        const v=norm(e.target.value),ok=v===norm(cur.cmd);
+        if(timed){const s=((Date.now()-t0)/1000).toFixed(1);
+          fb(ok,ok?'Clean, '+s+'s.':'Typo — '+s+'s. Answer: '+cur.cmd);}
+        else fb(ok,ok?'Correct.':'Answer: '+cur.cmd);
+        e.target.disabled=true;});
+    };
+    document.querySelectorAll('#ch-box .chip').forEach(c=>c.onclick=()=>{
+      game=c.dataset.g;
+      document.querySelectorAll('#ch-box .chip').forEach(x=>x.classList.toggle('on',x===c));
+      next();});
+    document.getElementById('ch-next').onclick=next;
+    S();next();
+  }
+});
+
+/* ═══════════════ MODE: MACRO ═══════════════ */
+let macSortables=[];
+ModeStudio.registerMode({
+  id:'macro',name:'MACRO',icon:'⧉',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">MACRO MODE</h2>
+    <p class="modesub">Chain commands into sequences. Run copies the whole chain, one command per line, ready to paste.</p>
+    <div class="toolrow"><button class="btn primary" id="mc-new">+ New macro</button></div>
+    <div id="mac-layout">
+      <div id="mac-list"></div>
+      <div id="creat-side"><h4>Command library</h4>
+        <input type="text" id="mc-filter" placeholder="filter…">
+        <div id="mc-lib" class="pocket-content" style="padding:0"></div>
+      </div>
+    </div></div>`;},
+  init(){
+    const st=Store.data.macro;
+    const list=document.getElementById('mac-list');
+    const lib=document.getElementById('mc-lib');
+    const drawLib=()=>{
+      const q=(document.getElementById('mc-filter').value||'').toLowerCase();
+      lib.innerHTML=allCommands().filter(c=>c.kind!=='key'&&(!q||c.cmd.toLowerCase().includes(q)))
+        .map(c=>`<div class="pchip c-${c.cat}" data-id="${c.id}"><span class="t">${esc(c.cmd)}</span></div>`).join('');
+      new Sortable(lib,{group:{name:'mac',pull:'clone',put:false},sort:false,animation:150,ghostClass:'ghost'});
+    };
+    const draw=()=>{
+      macSortables.forEach(s=>s.destroy());macSortables=[];
+      list.innerHTML=st.macros.map(m=>`
+        <div class="macro" data-id="${m.id}">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4>@${esc(m.name)}</h4>
+            <div><button class="minibtn ren">rename</button>
+            <button class="minibtn danger del">del</button></div></div>
+          <div class="seq">${m.seq.map(id=>{const c=cmdById(id);
+            return c?`<div class="pchip c-${c.cat}" data-id="${c.id}"><span class="t">${esc(c.cmd)}</span><span class="x">✕</span></div>`:'';}).join('')}</div>
+          <button class="btn primary run">▶ Run macro</button>
+        </div>`).join('')||'<p style="color:var(--faint)">No macros yet — create one and drag commands in.</p>';
+      list.querySelectorAll('.macro').forEach(el=>{
+        const m=st.macros.find(x=>x.id===el.dataset.id);
+        const seq=el.querySelector('.seq');
+        macSortables.push(new Sortable(seq,{group:'mac',animation:150,ghostClass:'ghost',
+          onSort:()=>sync(m,seq),onAdd:()=>sync(m,seq)}));
+        el.querySelector('.run').onclick=()=>{
+          const lines=m.seq.map(id=>{const c=cmdById(id);return c?c.cmd:null;}).filter(Boolean);
+          if(!lines.length){toast('Macro is empty','err');return;}
+          copyText(lines.join('\n'));};
+        el.querySelector('.del').onclick=()=>{if(confirm('Delete macro @'+m.name+'?')){
+          st.macros=st.macros.filter(x=>x.id!==m.id);draw();}};
+        el.querySelector('.ren').onclick=()=>{
+          const n=prompt('Macro name:',m.name);if(n){m.name=n;draw();}};
+        bindX(el,m);
+      });
+    };
+    const sync=(m,seq)=>{m.seq=[...seq.querySelectorAll('.pchip')].map(el=>el.dataset.id);bindX(seq.closest('.macro'),m);};
+    const bindX=(el,m)=>{el.querySelectorAll('.pchip .x').forEach(x=>x.onclick=e=>{
+      e.stopPropagation();const chip=x.closest('.pchip');const seq=chip.closest('.seq');
+      chip.remove();sync(m,seq);});};
+    document.getElementById('mc-new').onclick=()=>{
+      const n=prompt('Macro name:','my-macro');
+      if(n){st.macros.push({id:'m'+Date.now(),name:n,seq:[]});draw();}};
+    document.getElementById('mc-filter').addEventListener('input',drawLib);
+    draw();drawLib();
+  },
+  destroy(){macSortables.forEach(s=>s.destroy());macSortables=[];}
+});
+
+/* ═══════════════ MODE: FILL-IN-THE-BLANK ═══════════════ */
+ModeStudio.registerMode({
+  id:'blanks',name:'FILL',icon:'▭',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">FILL-IN-THE-BLANK</h2>
+    <p class="modesub">Real command templates with typed blanks. Fill the boxes, copy the finished command.</p>
+    <div id="fb-list"></div></div>`;},
+  init(){
+    const list=document.getElementById('fb-list');
+    const T=TEMPLATES.filter(t=>harnessMatch(t.harness));
+    list.innerHTML=T.map((t,i)=>{
+      const base=t.base?cmdById(t.base):null;
+      return `<div class="fbrow" data-i="${i}">
+        <div class="fbdesc">${esc(t.desc||(base&&base.desc)||'')}</div>
+        <div class="fbline">${t.parts.map((p,j)=>typeof p==='string'
+          ?`<span class="fblit">${esc(p)}</span>`
+          :`<input class="blank" data-j="${j}" placeholder="${esc(p.h||p.n)}" value="${esc(p.d||'')}" size="${Math.max((p.d||p.h||p.n).length,4)}">`).join('')}
+          <button class="minibtn fbcopy">copy</button></div></div>`;}).join('');
+    list.querySelectorAll('.fbrow').forEach(row=>{
+      row.querySelector('.fbcopy').onclick=()=>{
+        const t=T[+row.dataset.i];
+        const out=t.parts.map((p,j)=>typeof p==='string'?p
+          :(row.querySelector(`input[data-j="${j}"]`).value||p.d||'')).join('');
+        copyText(out);};
+      row.querySelectorAll('input.blank').forEach(inp=>
+        inp.addEventListener('input',()=>{inp.size=Math.max(inp.value.length,4);}));
+    });
+  }
+});
+
+/* ═══════════════ MODE: COMMAND BUILDER ═══════════════ */
+ModeStudio.registerMode({
+  id:'builder',name:'BUILD',icon:'⊞',
+  render(){return `<div class="wrap">
+    <h2 class="modehead">COMMAND BUILDER</h2>
+    <p class="modesub">Tap chunks to snap them into the tray; drag to reorder; add custom text (API keys, paths, prompts) wherever the command needs it. Chunks join with spaces.</p>
+    <div id="bl-tray"></div>
+    <div class="toolrow">
+      <button class="btn" id="bl-custom">+ custom text</button>
+      <button class="btn danger" id="bl-clear">clear</button>
+      <button class="btn primary" id="bl-copy">copy command</button></div>
+    <code id="bl-preview"></code>
+    <div id="bl-palette"></div></div>`;},
+  init(){
+    const st=Store.data.builder;
+    const tray=document.getElementById('bl-tray');
+    const prev=document.getElementById('bl-preview');
+    const draw=()=>{
+      tray.innerHTML=st.seq.map((s,i)=>
+        `<div class="pchip ${s.custom?'custom':''} c-config" data-i="${i}"><span class="t">${esc(s.txt)}</span><span class="x">✕</span></div>`).join('')
+        ||'<span class="bl-empty">tray is empty — tap chunks below</span>';
+      prev.textContent=st.seq.map(s=>s.txt).join(' ')||'…';
+      tray.querySelectorAll('.x').forEach(x=>x.onclick=()=>{
+        st.seq.splice(+x.closest('.pchip').dataset.i,1);draw();});
+    };
+    this._sort=new Sortable(tray,{animation:150,ghostClass:'ghost',draggable:'.pchip',onEnd:()=>{
+      const order=[...tray.querySelectorAll('.pchip')].map(el=>+el.dataset.i);
+      st.seq=order.map(i=>st.seq[i]);draw();}});
+    document.getElementById('bl-palette').innerHTML=CHUNK_GROUPS.filter(g=>harnessMatch(g.harness)).map(g=>`
+      <div class="bl-group"><h4>${esc(g.name)}</h4><div class="bl-chips">${
+        g.chunks.map(c=>`<button class="chip" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`).join('');
+    document.querySelectorAll('#bl-palette .chip').forEach(b=>b.onclick=()=>{
+      st.seq.push({txt:b.dataset.c});draw();});
+    document.getElementById('bl-custom').onclick=()=>{
+      const v=prompt('Custom text (API key, path, model tag, prompt…):');
+      if(v){st.seq.push({txt:v,custom:true});draw();}};
+    document.getElementById('bl-clear').onclick=()=>{st.seq=[];draw();};
+    document.getElementById('bl-copy').onclick=()=>{
+      if(!st.seq.length){toast('Tray is empty','err');return;}
+      copyText(st.seq.map(s=>s.txt).join(' '));};
+    draw();
+  },
+  destroy(){if(this._sort)this._sort.destroy();}
+});
+
+/* ═══════════════ SETTINGS + HELP ═══════════════ */
+function showSettings(){
+  openModal(`<h3>Settings</h3>
+    <p style="color:var(--dim);font-size:12px;margin-bottom:8px">State lives in memory for this session. Export to keep your layout, presets, macros, and custom commands; import to restore them.</p>
+    <div class="modalfoot" style="justify-content:flex-start">
+      <button class="btn primary" id="st-exp">Export config (JSON)</button>
+      <button class="btn" id="st-imp">Import config</button>
+      <input type="file" id="st-file" accept="application/json" style="display:none">
+      <button class="btn" id="st-theme">Toggle theme</button>
+    </div>
+    <div class="modalfoot"><button class="btn" onclick="closeModal()">Close</button></div>`,
+    m=>{
+      m.querySelector('#st-exp').onclick=()=>Store.export();
+      m.querySelector('#st-imp').onclick=()=>m.querySelector('#st-file').click();
+      m.querySelector('#st-file').onchange=e=>{if(e.target.files[0]){Store.import(e.target.files[0]);closeModal();}};
+      m.querySelector('#st-theme').onclick=()=>{
+        Store.data.theme=Store.data.theme==='dark'?'light':'dark';applyTheme();};
+    });
+}
+function showHelp(){
+  openModal(`<h3>Help</h3>
+    ${ModeStudio.order.map((id,i)=>{const m=ModeStudio.modes[id];
+      return `<div class="helprow"><kbd>Ctrl+${i+1}</kbd><b style="color:var(--ink)">${esc(m.name)}</b><span>${helpText(id)}</span></div>`;}).join('')}
+    <div class="helprow"><kbd>Ctrl+K</kbd><span>focus search (where present)</span></div>
+    <div class="helprow"><kbd>Esc</kbd><span>close modal / leave Zen</span></div>
+    <div class="modalfoot"><button class="btn" onclick="closeModal()">Close</button></div>`);
+}
+function helpText(id){return{
+  control:'searchable database, click to copy',
+  creativity:'drag-and-drop pockets for your own layout',
+  speedrun:'terminal-style rapid copy with history and CPM',
+  quick:'one-click launch snippets with system prompts',
+  edit:'modify commands, add custom ones',
+  zen:'nothing but a prompt',
+  explorer:'commands grouped by task, with examples',
+  challenge:'flashcards, multiple choice, speed typing',
+  macro:'chain commands into pasteable sequences',
+  blanks:'command templates with typed blanks',
+  builder:'assemble complex commands chunk by chunk'}[id]||'';}
+
+/* ═══════════════ GLOBAL KEYS + BOOT ═══════════════ */
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&!e.shiftKey&&e.key>='1'&&e.key<='9'){
+    const id=ModeStudio.order[+e.key-1];
+    if(id){e.preventDefault();ModeStudio.switchMode(id);}}
+  if(e.ctrlKey&&(e.key==='k'||e.key==='K')){
+    const s=document.getElementById('cc-q')||document.getElementById('ex-q')||
+            document.getElementById('cr-filter')||document.getElementById('mc-filter');
+    if(s){e.preventDefault();s.focus();}}
+  if(e.key==='Escape')closeModal();
+});
+ModeStudio.buildBar();
+applyTheme();
+ModeStudio.switchMode(Store.data.activeMode);
+</script>
+</body>
+</html>
