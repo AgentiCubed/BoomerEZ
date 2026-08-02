@@ -9,6 +9,7 @@
 :root{
   --bg:#0b0e12; --panel:#12161c; --panel2:#171c24; --edge:#232a33; --edge2:#2e3742;
   --ink:#e8ecf1; --soft:#c3ccd6; --cyan:#4fc3f7; --amber:#ffb74d; --green:#66bb6a;
+  --edge-strong:#8b95a3;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);
@@ -20,16 +21,27 @@ h2{font-size:23px;font-weight:700;margin:44px 0 14px;color:var(--cyan)}
 p{margin-bottom:18px;color:var(--soft)}
 p.big{font-size:20px;color:var(--ink)}
 a{color:var(--cyan)}
-.card{display:block;background:var(--panel);border:1px solid var(--edge2);
-  border-left:5px solid var(--cyan);border-radius:12px;
-  padding:22px 24px;margin-bottom:16px;text-decoration:none;color:var(--ink);
-  min-height:44px;transition:background .15s,border-color .15s}
-.card:hover,.card:focus-visible{background:var(--panel2);border-color:var(--cyan)}
+.programs{list-style:none}
+.programs li{margin-bottom:20px}
+.card{display:block;background:var(--panel);border:2px solid var(--edge-strong);
+  border-left:6px solid var(--cyan);border-radius:12px;
+  padding:22px 24px;text-decoration:none;color:var(--ink);
+  min-height:44px;box-shadow:0 3px 8px rgba(0,0,0,.5);
+  transition:background .15s,border-color .15s,box-shadow .15s,transform .15s}
+.card:hover,.card:focus-visible{background:var(--panel2);border-color:var(--cyan);
+  box-shadow:0 9px 20px rgba(0,0,0,.65);transform:translateY(-3px)}
 .card h3{font-size:21px;font-weight:700;margin-bottom:6px}
-.card p{font-size:17px;margin-bottom:10px}
-.card .go{font-size:17px;color:var(--cyan);font-weight:700}
+.card p{font-size:18px;margin-bottom:16px}
+.card .go{display:inline-block;font-size:18px;font-weight:700;
+  background:var(--cyan);color:#0b0e12;border:2px solid var(--cyan);
+  border-radius:8px;padding:10px 22px;min-height:44px;
+  transition:background .15s}
+.card:hover .go,.card:focus-visible .go{background:#82d6ff;border-color:#82d6ff}
 .card.soon{border-left-color:var(--amber);cursor:default}
-.card.soon .go{color:var(--amber)}
+.card.soon:hover{background:var(--panel);border-color:var(--edge-strong);
+  border-left-color:var(--amber);box-shadow:0 3px 8px rgba(0,0,0,.5);transform:none}
+.card.soon .go,.card.soon:hover .go{background:transparent;color:var(--amber);
+  border-color:var(--amber)}
 .promise{background:var(--panel);border-left:5px solid var(--green);
   border-radius:10px;padding:20px 24px;margin:30px 0}
 .promise ul{list-style:none;display:flex;flex-direction:column;gap:12px}
@@ -39,7 +51,8 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--edge);
   font-size:16px;color:#8b95a3}
 :focus-visible{outline:3px solid var(--amber);outline-offset:3px}
 @media(max-width:560px){.wrap{padding:32px 16px 70px}h1{font-size:28px}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}
+  .card:hover,.card:focus-visible{transform:none}}
 </style>
 </head>
 <body>
@@ -51,19 +64,31 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--edge);
 
   <p>BoomerEZ programs are free, and each one is a single file. You open it and it works. There is nothing to install, no account to make, and no password to remember.</p>
 
-  <h2>The programs</h2>
+  <section aria-labelledby="programs-heading">
 
+  <h2 id="programs-heading">Select a Program Below to Get Started</h2>
+
+  <p>Each program is a box below. The whole box is one big button — click anywhere on it.</p>
+
+  <ul class="programs">
+  <li>
   <a class="card" href="apps/mode-studio/">
     <h3>Mode Studio</h3>
     <p>You tell it what you want an AI on your own computer to do, in ordinary words. It writes the exact instruction for you, explains every piece of it, and then shows you precisely where to put it — step by step, with the keys to press.</p>
-    <span class="go">Open Mode Studio &rarr;</span>
+    <span class="go">Open Mode Studio <span aria-hidden="true">&rarr;</span></span>
   </a>
+  </li>
 
+  <li>
   <div class="card soon">
     <h3>BoomerEZ Music</h3>
     <p>You have songs on your computer. This turns them into a page you can send to your family — with your name on it, a photograph, and a play button that works on their phone.</p>
-    <span class="go">Being built now</span>
+    <span class="go">Being built now — not clickable yet</span>
   </div>
+  </li>
+  </ul>
+
+  </section>
 
   <h2>What we promise</h2>
 
