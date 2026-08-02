@@ -170,6 +170,64 @@ input.blank:focus{border-color:var(--cyan)}
 .bl-chips{display:flex;flex-wrap:wrap;gap:6px}
 .bl-chips .chip:hover{color:var(--ink);border-color:var(--dim)}
 .pchip.custom{border-left-color:var(--red)}
+/* builder guide + status */
+#bl-guide{background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:12px;margin-bottom:12px}
+#bl-guide h4{font-size:11px;color:var(--dim);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
+#bl-guide input{width:100%;margin-bottom:8px}
+#bl-goal-active{font-size:12px;color:var(--dim);margin-top:8px;min-height:16px}
+#bl-goal-active .next{color:var(--cyan)}
+#bl-goal-active .ok{color:var(--green)}
+#bl-goal-active .warn{color:var(--amber)}
+#bl-status{display:flex;gap:10px;align-items:baseline;font-size:12px;margin:0 0 10px;padding:9px 12px;border:1px solid var(--edge);border-radius:8px;background:var(--panel);color:var(--ink)}
+#bl-status .ic{font-weight:800}
+#bl-status.st-valid{border-color:color-mix(in srgb,var(--green) 55%,transparent)}
+#bl-status.st-valid .ic{color:var(--green)}
+#bl-status.st-partial{border-color:color-mix(in srgb,var(--amber) 55%,transparent)}
+#bl-status.st-partial .ic{color:var(--amber)}
+#bl-status.st-invalid{border-color:color-mix(in srgb,var(--red) 60%,transparent)}
+#bl-status.st-invalid .ic{color:var(--red)}
+#bl-status i{color:var(--faint);font-style:normal}
+.hint-next{border-color:var(--cyan)!important;color:var(--cyan)!important;animation:blpulse 1.2s ease-in-out infinite}
+.hint-later{border-color:color-mix(in srgb,var(--cyan) 40%,transparent)!important}
+@keyframes blpulse{0%,100%{box-shadow:0 0 4px color-mix(in srgb,var(--cyan) 25%,transparent)}50%{box-shadow:0 0 14px color-mix(in srgb,var(--cyan) 60%,transparent)}}
+/* ═══ SIMPLE MODE (BoomerEZ standard: 18px+ type, 44px targets, visible help) ═══ */
+body.simple-active #modebar{display:none}
+#simple-root{max-width:820px;margin:0 auto;padding:32px 22px 80px;font-size:18px;line-height:1.6}
+.sm-h1{font-size:30px;font-weight:800;line-height:1.25;margin-bottom:14px;color:var(--ink)}
+.sm-h2{font-size:21px;font-weight:700;margin:34px 0 10px;color:var(--cyan)}
+.sm-lead{font-size:18px;color:#c3ccd6;margin-bottom:20px}
+body.light .sm-lead{color:#39424e}
+.sm-lead.sm-tight{margin-bottom:12px}
+.sm-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:34px}
+.sm-card{display:flex;flex-direction:column;gap:5px;text-align:left;background:var(--panel);border:1px solid var(--edge2);border-left:5px solid var(--cyan);border-radius:12px;padding:18px 20px;min-height:44px;color:var(--ink);transition:border-color .15s,background .15s}
+.sm-card:hover,.sm-card:focus-visible{background:var(--panel2);border-color:var(--cyan)}
+.sm-card-t{font-size:19px;font-weight:700;line-height:1.35}
+.sm-card-d{font-size:16px;color:#b4bec9}
+body.light .sm-card-d{color:#4a5462}
+.sm-primary{display:block;width:100%;min-height:60px;font-size:20px;font-weight:700;background:var(--cyan);color:#0b0e12;border:none;border-radius:12px;padding:16px;margin:20px 0 8px}
+.sm-primary:hover,.sm-primary:focus-visible{filter:brightness(1.12)}
+.sm-cmd{background:var(--panel);border:2px solid var(--cyan);border-radius:12px;padding:18px 20px;font-size:19px;line-height:2;word-break:break-word;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+input.sm-blank{font-size:19px;padding:5px 10px;min-height:44px;border:2px solid var(--cyan);border-radius:8px;color:var(--cyan);background:var(--panel2);min-width:120px;flex:1}
+.sm-pieces{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+.sm-pieces li{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:13px 16px}
+.sm-pieces code{color:var(--cyan);font-weight:700;font-size:17px;flex:none}
+.sm-pieces span{font-size:17px;color:#c3ccd6;flex:1;min-width:200px}
+body.light .sm-pieces span{color:#39424e}
+.sm-steps{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.sm-os{flex:1;min-width:280px;background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:18px 20px}
+.sm-os h3{font-size:18px;color:var(--amber);margin-bottom:10px}
+.sm-os ol{margin-left:20px;display:flex;flex-direction:column;gap:10px;font-size:17px;color:#c3ccd6}
+body.light .sm-os ol{color:#39424e}
+.sm-caution{background:color-mix(in srgb,var(--amber) 12%,transparent);border:2px solid var(--amber);border-radius:12px;padding:16px 18px;font-size:17px;margin-bottom:22px}
+.sm-caution b{color:var(--amber)}
+.sm-reassure{background:color-mix(in srgb,var(--green) 10%,transparent);border-left:5px solid var(--green);border-radius:8px;padding:14px 18px;font-size:17px;margin:26px 0 18px}
+.sm-foot{border-top:1px solid var(--edge);padding-top:22px}
+.sm-foot input{width:100%;font-size:18px;min-height:52px}
+.sm-tiny{font-size:16px;color:var(--dim);margin-top:16px}
+.sm-link{background:none;border:none;color:var(--cyan);font-size:16px;text-decoration:underline;padding:6px 2px;min-height:44px}
+.sm-back{display:block;margin-bottom:18px;font-size:17px}
+#simple-root :focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+@media(max-width:560px){#simple-root{padding:22px 16px 70px}.sm-h1{font-size:26px}}
 @media(max-width:760px){#creat-layout,#mac-layout{flex-direction:column}#creat-side{width:100%;position:static;max-height:240px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -276,9 +334,10 @@ function harnessMatch(h){const hz=Store.data.harness||'all';
    memory for the session; use Settings → Export/Import to persist. */
 const Store = {
   data: {
-    activeMode:'control',
+    activeMode:'simple',
     theme:'dark',
     harness:'all',
+    simple:{goal:null},
     edit:{overrides:{},custom:[]},
     creativity:{pockets:[
       {id:'p1',name:'ESSENTIAL',color:'#4fc3f7',commands:['run','bye','clear','help']},
@@ -381,6 +440,111 @@ const CHUNK_GROUPS=[
 ];
 CHUNK_GROUPS.forEach(g=>{if(!g.harness)g.harness='ollama';});
 
+/* ═══════════════ BUILDER INTELLIGENCE ═══════════════ */
+const GLOSS={
+ 'ollama':'the Ollama program','/set':'change a session setting','/show':'display session info','curl':'make a raw HTTP request',
+ 'run':'start an interactive chat','pull':'download a model','stop':'unload from memory','rm':'DELETE a model from disk',
+ 'show':'display model details','list':'list installed models','ps':'show loaded models','cp':'copy a model','serve':'start the server',
+ 'parameter':'a tunable setting follows','system':'the system prompt follows','format':'an output format follows',
+ 'temperature':'creativity dial','num_ctx':'context window size','top_p':'sampling cutoff','seed':'random seed','num_predict':'max reply tokens',
+ 'json':'valid-JSON output','--verbose':'show timing stats','--modelfile':'print the Modelfile','--insecure':'skip TLS checks',
+ 'llama-server':'llama.cpp HTTP server','llama-cli':'llama.cpp chat CLI','llama-bench':'llama.cpp benchmark','-m':'model file follows',
+ 'model.gguf':'a GGUF model file','-cnv':'conversation mode','-p':'a prompt follows','"your prompt"':'the prompt text',
+ '-ngl':'GPU layers follow','-c':'context size follows','--temp':'temperature follows','--port':'port number follows',
+ 'lms':'the LM Studio CLI','get':'search & download','load':'load into memory','unload':'unload model(s)','start':'start it',
+ 'status':'check status','log':'logs','stream':'follow live','--all':'apply to all',
+ 'vllm':'the vLLM server','--tensor-parallel-size':'GPUs to split across','--max-model-len':'context cap follows','--gpu-memory-utilization':'VRAM fraction follows',
+ 'claude':'Claude Code CLI','--continue':'resume last session','--append-system-prompt':'add system-prompt text','"You are..."':'system prompt text',
+ '/compact':'compress the conversation','/model':'view or switch model','/cost':'token usage',
+ '-d':'request body follows','-H':'an HTTP header follows','"Content-Type: application/json"':'JSON content-type header',
+ '"Authorization: Bearer YOUR_KEY"':'auth header — replace YOUR_KEY',
+};
+const NEEDS_ARG=new Set(['-m','-p','-ngl','-c','--temp','--port','-d','-H','--tensor-parallel-size','--max-model-len','--gpu-memory-utilization','--append-system-prompt','parameter','system','format','-sys']);
+function glossFor(t){
+  if(GLOSS[t])return GLOSS[t];
+  if(/^https?:\/\//.test(t))return 'the server endpoint URL';
+  if(/deepseek/i.test(t))return 'the model to use';
+  if(/\.gguf$/.test(t))return 'a GGUF model file';
+  if(/^\{/.test(t))return 'JSON payload';
+  if(/^\d+(\.\d+)?$/.test(t))return 'a value';
+  if(/^"/.test(t))return 'text argument';
+  if(/^--?/.test(t))return 'a flag';
+  return 'your text';
+}
+const DESTRUCTIVE=new Set(['rm','unload','llama-quantize']);
+function analyzeChain(t){
+  const R=(status,explain,hint)=>({status,explain,hint:hint||''});
+  if(!t.length)return R('empty','Tray is empty — start with a BASE chunk, or pick a goal above and follow the glow.');
+  const t0=t[0], last=t[t.length-1];
+  const isArg=x=>x!==undefined&&!/^--?[a-zA-Z]/.test(x);
+  const dangling=NEEDS_ARG.has(last);
+  const danger=t.some(x=>DESTRUCTIVE.has(x))?' Careful — this one deletes or unloads; double-check the target.':'';
+  if(t0==='ollama'){
+    const verbs={run:'starts an interactive chat with',pull:'downloads',stop:'unloads',rm:'permanently deletes',show:'shows details for',cp:'copies',list:'lists your installed models',ps:'shows models loaded in memory',serve:'starts the Ollama server'};
+    const v=t[1];
+    if(!v)return R('partial','The Ollama program, with nothing to do yet.','Add an ACTION chunk (run, pull, list…).');
+    if(!verbs[v])return R('invalid','"'+v+'" is not an ollama action.','Pick an ACTION chunk right after ollama.');
+    if(['list','ps','serve'].includes(v))return R('valid','ollama '+v+' — '+verbs[v]+'.');
+    if(v==='cp')return t.length>=4&&isArg(t[2])&&isArg(t[3])?R('valid','Copies model '+t[2]+' to '+t[3]+'.'):R('partial','ollama cp needs a source and a destination name.','Add two model names.');
+    if(!isArg(t[2]))return R('partial','This '+verbs[v]+' … which model?','Add a MODEL chunk or custom text.');
+    return R('valid','This '+verbs[v]+' '+t[2]+(t.length>3?', with extra options':'')+'.'+danger);
+  }
+  if(t0==='/set'){
+    if(t[1]==='parameter')return t[2]&&t[3]?R('valid','Sets '+t[2]+' to '+t[3]+' for this chat session.'):(t[2]?R('partial','Setting '+t[2]+' … to what?','Add a VALUE chunk.'):R('partial','/set parameter — which one?','Add a PARAMETER chunk.'));
+    if(t[1]==='system')return t[2]?R('valid','Gives the model standing instructions (a system prompt).'):R('partial','/set system needs the prompt text.','Add custom text in quotes.');
+    if(t[1]==='format')return t[2]==='json'?R('valid','Forces replies to be valid JSON.'):R('partial','/set format — to what?','Add the json chunk.');
+    return R('partial','/set — set what?','Add a SETTING chunk: parameter, system, or format.');
+  }
+  if(t0==='/show')return t[1]?R('valid','Shows the session\'s '+t[1]+'. Type it inside a running chat.'):R('partial','/show — show what?','Add info, parameters, system, or template as custom text.');
+  if(['/clear','/compact','/model','/cost','/bye'].includes(t0))return R('valid','A chat command ('+ (GLOSS[t0]||'') +') — type it inside a running session, not the shell.');
+  if(['llama-server','llama-cli','llama-bench'].includes(t0)){
+    const mi=t.indexOf('-m');
+    if(mi<0||!isArg(t[mi+1]))return R('partial',t0+' needs a model file.','Add -m followed by model.gguf (or a custom path).');
+    if(dangling)return R('partial','The last flag ('+last+') is waiting for its value.','Add the value it expects.');
+    const what={'llama-server':'serves the model over HTTP','llama-bench':'benchmarks the model\'s speed','llama-cli':'chats with the model in the terminal'}[t0];
+    return R('valid','This '+what+' using '+t[mi+1]+'.'+danger);
+  }
+  if(t0==='lms'){
+    const sub=t[1];
+    if(!sub)return R('partial','The LM Studio CLI with no subcommand.','Add one: ls, ps, get, load, unload, server…');
+    if(['ls','ps'].includes(sub))return R('valid','Lists '+(sub==='ls'?'downloaded':'currently loaded')+' models.');
+    if(['get','load'].includes(sub))return isArg(t[2])?R('valid',(sub==='get'?'Searches for and downloads ':'Loads ')+t[2]+'.'):R('partial','lms '+sub+' — which model?','Add a model name as custom text.');
+    if(sub==='unload')return R('valid','Unloads '+(t.includes('--all')?'all models':'a model')+' from memory.'+danger);
+    if(sub==='server')return ['start','status','stop'].includes(t[2])?R('valid','LM Studio server: '+t[2]+'.'):R('partial','lms server — start, status, or stop?','Add start or status.');
+    if(sub==='log')return R('valid','Streams the server logs live.');
+    return R('invalid','"'+sub+'" isn\'t an lms subcommand.','Use ls, ps, get, load, unload, server, or log.');
+  }
+  if(t0==='vllm')return t[1]==='serve'?(isArg(t[2])?(dangling?R('partial','The last flag is waiting for its value.','Add the value.'):R('valid','Serves '+t[2]+' with an OpenAI-compatible API.')):R('partial','vllm serve — which Hugging Face model?','Add the MODEL chunk or custom org/model.')):R('partial','vllm — serve is the move here.','Add the serve chunk.');
+  if(t0==='claude'){
+    if(dangling)return R('partial','The last flag ('+last+') needs its text.','Add custom text in quotes.');
+    if(t.includes('-p'))return R('valid','Asks Claude Code one question and prints the answer.');
+    if(t.includes('--continue'))return R('valid','Resumes your most recent Claude Code session.');
+    return R('valid','Starts an interactive Claude Code session in the current directory.');
+  }
+  if(t0==='curl'){
+    const url=t.find(x=>/^https?:\/\//.test(x));
+    if(!url)return R('partial','curl — request what?','Add an endpoint URL chunk.');
+    if(dangling)return R('partial','The last flag ('+last+') needs its value.','Add the header or body it expects.');
+    return R('valid','Sends an HTTP request to '+url.replace(/^https?:\/\//,'')+(t.includes('-d')?' with a JSON body':'')+'.');
+  }
+  if(/^--?/.test(t0))return R('invalid','A chain can\'t start with a flag — flags modify a command.','Start with a BASE chunk like ollama or llama-server.');
+  return R('unknown','Not a pattern I recognize. It may still be valid shell, but I can\'t vouch for it.','Start from a BASE chunk, or pick a goal above.');
+}
+const GOALS=[
+ {id:'g-chat',label:'Chat with a local model',kw:['chat','talk','interactive'],harness:'ollama',chunks:['ollama','run','deepseek-r1']},
+ {id:'g-70b',label:'Run the big 70B model',kw:['70b','big','large','biggest'],harness:'ollama',chunks:['ollama','run','deepseek-r1:70b']},
+ {id:'g-dl',label:'Download a model (no chat)',kw:['download','pull','install'],harness:'ollama',chunks:['ollama','pull','deepseek-r1']},
+ {id:'g-creative',label:'Make replies more creative',kw:['creative','random','wild','imaginative'],harness:'ollama',chunks:['/set','parameter','temperature','1.0']},
+ {id:'g-precise',label:'Make replies precise & repeatable',kw:['precise','deterministic','strict','accurate','factual','consistent'],harness:'ollama',chunks:['/set','parameter','temperature','0.2']},
+ {id:'g-ctx',label:'Give the model more memory',kw:['memory','context','longer','remember','forget'],harness:'ollama',chunks:['/set','parameter','num_ctx','8192']},
+ {id:'g-gguf',label:'Serve a GGUF file over HTTP',kw:['gguf','serve','server','http'],harness:'llamacpp',chunks:['llama-server','-m','model.gguf','--port','8080']},
+ {id:'g-bench',label:'Benchmark this machine\'s speed',kw:['benchmark','speed','fast','tokens','how fast'],harness:'llamacpp',chunks:['llama-bench','-m','model.gguf']},
+ {id:'g-lms',label:'Start LM Studio\'s server',kw:['lm studio','lms'],harness:'lmstudio',chunks:['lms','server','start']},
+ {id:'g-vllm',label:'Serve a Hugging Face model (vLLM)',kw:['vllm','hugging','huggingface'],harness:'vllm',chunks:['vllm','serve','deepseek-ai/DeepSeek-R1-Distill-Qwen-7B']},
+ {id:'g-cc',label:'Ask Claude Code one question',kw:['claude','question','repo','codebase'],harness:'claude',chunks:['claude','-p','"your prompt"']},
+ {id:'g-api',label:'Call a local server\'s API',kw:['api','curl','endpoint','request','post'],harness:'universal',chunks:['curl','http://localhost:8080/v1/chat/completions','-H','"Content-Type: application/json"','-d','{"model":"local","messages":[{"role":"user","content":"Hello"}]}']},
+];
+
 /* ═══════════════ UTILITIES ═══════════════ */
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 let toastTimer;
@@ -420,6 +584,7 @@ const ModeStudio={
     const cur=this.modes[this.activeMode];
     if(cur&&cur.destroy)cur.destroy();
     this.activeMode=id;Store.data.activeMode=id;
+    document.body.classList.toggle('simple-active',id==='simple');
     const mode=this.modes[id];
     document.getElementById('main').innerHTML=mode.render();
     if(mode.init)mode.init();
@@ -442,12 +607,201 @@ const ModeStudio={
       bar.appendChild(b);
     });
     const sp=document.createElement('div');sp.className='spacer';bar.appendChild(sp);
+    const easy=document.createElement('button');easy.className='iconbtn';easy.textContent='← Simple';
+    easy.title='Back to the simple version';easy.onclick=()=>this.switchMode('simple');bar.appendChild(easy);
     const help=document.createElement('button');help.className='iconbtn';help.textContent='?';help.title='Help';
     help.onclick=showHelp;bar.appendChild(help);
     const st=document.createElement('button');st.className='iconbtn';st.textContent='⚙';st.title='Settings';
     st.onclick=showSettings;bar.appendChild(st);
   }
 };
+
+/* ═══════════════ SIMPLE MODE RECIPES (plain English, no jargon) ═══════════════ */
+const SIMPLE_GOALS=[
+ {id:'s-chat',label:'Have a conversation with an AI on my own computer',
+  plain:'Starts a private chat with an AI that runs on your machine. Nothing you type leaves your computer.',
+  tool:'Ollama', where:'terminal',
+  parts:['ollama run ',{n:'model',h:'which AI',d:'deepseek-r1'}],
+  pieces:[['ollama','The name of the free program that runs AI models for you.'],
+          ['run','Tells it to start a conversation.'],
+          ['deepseek-r1','Which AI you want to talk to. This one is a good all-rounder.']]},
+ {id:'s-big',label:'Use the biggest, smartest version of the AI',
+  plain:'Same conversation, but with the largest model. It answers better and needs a powerful computer with a lot of memory.',
+  tool:'Ollama', where:'terminal',
+  caution:'This one needs roughly 40GB of memory. On most laptops it will be very slow or refuse to start. The regular version above is the safer choice.',
+  parts:['ollama run deepseek-r1:70b'],
+  pieces:[['ollama run','Start a conversation.'],
+          ['deepseek-r1:70b','The large version. The "70b" means 70 billion settings inside it — bigger and smarter, but heavier.']]},
+ {id:'s-get',label:'Put an AI onto my computer for the first time',
+  plain:'Downloads an AI so it lives on your machine. Do this once; after that it starts instantly.',
+  tool:'Ollama', where:'terminal',
+  parts:['ollama pull ',{n:'model',h:'which AI',d:'deepseek-r1'}],
+  pieces:[['ollama','The program that manages AI models.'],
+          ['pull','Download it, but don\'t start chatting yet.'],
+          ['deepseek-r1','Which one to download.']]},
+ {id:'s-see',label:'See which AIs I already have',
+  plain:'Lists everything already downloaded onto your computer, with sizes.',
+  tool:'Ollama', where:'terminal',
+  parts:['ollama list'],
+  pieces:[['ollama','The program that manages AI models.'],['list','Show me everything I have.']]},
+ {id:'s-busy',label:'See what\'s using my computer\'s memory right now',
+  plain:'Shows which AIs are currently loaded and taking up memory.',
+  tool:'Ollama', where:'terminal',
+  parts:['ollama ps'],
+  pieces:[['ollama','The program that manages AI models.'],['ps','Show what\'s running at this moment.']]},
+ {id:'s-free',label:'Free up memory — my computer is sluggish',
+  plain:'Unloads an AI from memory. It stays on your computer; it just stops taking up space while you do other things.',
+  tool:'Ollama', where:'terminal',
+  parts:['ollama stop ',{n:'model',h:'which AI',d:'deepseek-r1'}],
+  pieces:[['ollama','The program that manages AI models.'],
+          ['stop','Unload it from memory. Nothing is deleted.'],
+          ['deepseek-r1','Which one to unload.']]},
+ {id:'s-creative',label:'Make the AI more imaginative',
+  plain:'Turns up the creativity dial. Good for brainstorming, stories, and coming up with options.',
+  tool:'Ollama', where:'chat',
+  parts:['/set parameter temperature 1.0'],
+  pieces:[['/set parameter','Change a setting for this conversation.'],
+          ['temperature','The creativity dial. Low is careful, high is adventurous.'],
+          ['1.0','A high setting. The normal value is around 0.7.']]},
+ {id:'s-precise',label:'Make the AI more careful and consistent',
+  plain:'Turns the creativity dial down. Good for facts, instructions, and anything where you want the same answer twice.',
+  tool:'Ollama', where:'chat',
+  parts:['/set parameter temperature 0.2'],
+  pieces:[['/set parameter','Change a setting for this conversation.'],
+          ['temperature','The creativity dial.'],
+          ['0.2','A low setting — steady and predictable.']]},
+ {id:'s-memory',label:'Let the AI remember more of our conversation',
+  plain:'Gives the AI a bigger short-term memory so it stops forgetting what you said earlier. Uses more of your computer\'s memory.',
+  tool:'Ollama', where:'chat',
+  parts:['/set parameter num_ctx ',{n:'size',h:'how much',d:'8192'}],
+  pieces:[['/set parameter','Change a setting for this conversation.'],
+          ['num_ctx','How much of the conversation the AI can hold in mind at once.'],
+          ['8192','A generous amount. Larger numbers remember more and run slower.']]},
+ {id:'s-persona',label:'Tell the AI who to be and how to answer',
+  plain:'Gives the AI standing instructions it follows for the whole conversation — its job, its manner, its rules.',
+  tool:'Ollama', where:'chat',
+  parts:['/set system "',{n:'instructions',h:'what it should be',d:'You are a patient teacher. Explain things simply and never assume I know the jargon.'},'"'],
+  pieces:[['/set system','Give the AI standing instructions.'],
+          ['"…"','Your instructions, in your own words, inside the quote marks.']]},
+ {id:'s-forget',label:'Start fresh — make the AI forget this conversation',
+  plain:'Wipes the current conversation from the AI\'s memory without closing anything. Useful when you change topic.',
+  tool:'Ollama', where:'chat',
+  parts:['/clear'],
+  pieces:[['/clear','Forget everything we\'ve said so far and start clean.']]},
+ {id:'s-leave',label:'Finish and close the conversation',
+  plain:'Ends the chat and returns you to the plain black screen.',
+  tool:'Ollama', where:'chat',
+  parts:['/bye'],
+  pieces:[['/bye','End the conversation and exit.']]},
+ {id:'s-delete',label:'Delete an AI I don\'t want anymore',
+  plain:'Permanently removes a model from your computer to reclaim disk space.',
+  tool:'Ollama', where:'terminal',
+  caution:'This permanently deletes the model. You can download it again later, but that takes time and internet. Double-check the name before you run it.',
+  parts:['ollama rm ',{n:'model',h:'which AI to delete',d:''}],
+  pieces:[['ollama','The program that manages AI models.'],
+          ['rm','Remove — this deletes it from your disk.'],
+          ['(the name)','Exactly which one to delete. Check it twice.']]},
+ {id:'s-claude',label:'Ask Claude about a folder of files on my computer',
+  plain:'Asks Claude Code one question about whatever folder you are in, and prints the answer.',
+  tool:'Claude Code', where:'terminal',
+  parts:['claude -p "',{n:'question',h:'your question',d:'What is in this folder and what is it for?'},'"'],
+  pieces:[['claude','The Claude Code program.'],
+          ['-p','Ask one question and print the answer, instead of starting a back-and-forth.'],
+          ['"…"','Your question, in plain English, inside the quote marks.']]},
+];
+
+/* ═══════════════ MODE: SIMPLE (BoomerEZ default) ═══════════════ */
+ModeStudio.registerMode({
+  id:'simple',name:'SIMPLE',icon:'☺',
+  render(){return `<div id="simple-root"><div id="sm-body"></div></div>`;},
+  init(){
+    const st=Store.data.simple||(Store.data.simple={goal:null});
+    const body=document.getElementById('sm-body');
+
+    const welcome=()=>{
+      body.innerHTML=`
+        <h1 class="sm-h1">What would you like to do?</h1>
+        <p class="sm-lead">Pick the one that sounds like what you want. You can't break anything here — nothing happens on your computer until you decide to run it.</p>
+        <div class="sm-cards">${SIMPLE_GOALS.map(g=>`
+          <button class="sm-card" data-g="${g.id}">
+            <span class="sm-card-t">${esc(g.label)}</span>
+            <span class="sm-card-d">${esc(g.plain)}</span>
+          </button>`).join('')}</div>
+        <div class="sm-foot">
+          <p class="sm-lead">Don't see what you need? Describe it in your own words:</p>
+          <input id="sm-ask" placeholder="for example: I want the AI to stop forgetting things">
+          <p class="sm-tiny">Already comfortable with this? <button class="sm-link" id="sm-adv">Show me all the tools</button></p>
+        </div>`;
+      body.querySelectorAll('.sm-card').forEach(b=>b.onclick=()=>{
+        st.goal=b.dataset.g;answer();});
+      document.getElementById('sm-adv').onclick=()=>ModeStudio.switchMode('control');
+      document.getElementById('sm-ask').addEventListener('keydown',e=>{
+        if(e.key!=='Enter')return;
+        const q=e.target.value.toLowerCase();
+        const words=q.split(/\W+/).filter(w=>w.length>3);
+        let best=null,score=0;
+        SIMPLE_GOALS.forEach(g=>{
+          const hay=(g.label+' '+g.plain).toLowerCase();
+          const s=words.filter(w=>hay.includes(w)).length;
+          if(s>score){score=s;best=g;}});
+        if(best&&score>0){st.goal=best.id;answer();}
+        else toast('I could not match that — try picking one of the choices above','err');
+      });
+    };
+
+    const assemble=(g)=>g.parts.map((p,j)=>typeof p==='string'?p
+      :((body.querySelector('input[data-j="'+j+'"]')||{}).value||p.d||'')).join('');
+
+    const answer=()=>{
+      const g=SIMPLE_GOALS.find(x=>x.id===st.goal);
+      if(!g){welcome();return;}
+      const chat=g.where==='chat';
+      body.innerHTML=`
+        <button class="sm-link sm-back" id="sm-back">&larr; Choose something else</button>
+        <h1 class="sm-h1">${esc(g.label)}</h1>
+        <p class="sm-lead">${esc(g.plain)}</p>
+        ${g.caution?`<div class="sm-caution"><b>Read this first.</b> ${esc(g.caution)}</div>`:''}
+        <h2 class="sm-h2">Here is your command</h2>
+        <p class="sm-lead sm-tight">The blue boxes are yours to change. Type in them if you want something different.</p>
+        <div class="sm-cmd">${g.parts.map((p,j)=>typeof p==='string'
+          ?`<span>${esc(p)}</span>`
+          :`<input class="sm-blank" data-j="${j}" value="${esc(p.d||'')}" placeholder="${esc(p.h||'')}" aria-label="${esc(p.n)}">`).join('')}</div>
+        <button class="sm-primary" id="sm-copy">Copy this command</button>
+        <h2 class="sm-h2">What each piece means</h2>
+        <ul class="sm-pieces">${g.pieces.map(p=>
+          `<li><code>${esc(p[0])}</code><span>${esc(p[1])}</span></li>`).join('')}</ul>
+        <h2 class="sm-h2">Where do I put it?</h2>
+        ${chat?`
+        <p class="sm-lead">This one goes <b>inside a conversation you have already started</b> — not into the black window on its own. Start a chat first (that is the very first choice on the previous screen), then paste this at the prompt and press <b>Enter</b>.</p>`
+        :`
+        <p class="sm-lead">This one goes into a program already on your computer called <b>Terminal</b> (on a Mac) or <b>PowerShell</b> (on Windows). It is a plain window where you type instructions. Here is how to find it:</p>
+        <div class="sm-steps">
+          <div class="sm-os"><h3>On a Mac</h3><ol>
+            <li>Hold the <b>Command</b> key and press the <b>space bar</b>. A search box appears in the middle of the screen.</li>
+            <li>Type the word <b>Terminal</b> and press <b>Enter</b>. A window of plain text opens.</li>
+            <li>Click once inside that window, then hold <b>Command</b> and press <b>V</b> to paste.</li>
+            <li>Press <b>Enter</b>. That is it.</li>
+          </ol></div>
+          <div class="sm-os"><h3>On Windows</h3><ol>
+            <li>Press the <b>Windows</b> key on your keyboard. A search box appears.</li>
+            <li>Type <b>PowerShell</b> and press <b>Enter</b>. A window of plain text opens.</li>
+            <li>Click once inside that window, then hold <b>Ctrl</b> and press <b>V</b> to paste.</li>
+            <li>Press <b>Enter</b>. That is it.</li>
+          </ol></div>
+        </div>
+        <p class="sm-lead"><b>First time doing this?</b> You need the free Ollama program installed before any of these will work. It comes from ollama.com — download it, open it like any other program, then come back here.</p>`}
+        <p class="sm-reassure">Nothing here can damage your computer. If a command is not right, the window simply says so, and you try another.</p>
+        <p class="sm-tiny"><button class="sm-link" id="sm-adv2">Show me all the tools</button></p>`;
+      document.getElementById('sm-back').onclick=()=>{st.goal=null;welcome();};
+      document.getElementById('sm-adv2').onclick=()=>ModeStudio.switchMode('control');
+      document.getElementById('sm-copy').onclick=()=>{
+        copyText(assemble(g));
+        toast('<b>Copied.</b> Now paste it where the steps below say.');};
+    };
+
+    st.goal?answer():welcome();
+  }
+});
 
 /* ═══════════════ MODE: CONTROL CENTER ═══════════════ */
 ModeStudio.registerMode({
@@ -997,8 +1351,15 @@ ModeStudio.registerMode({
   id:'builder',name:'BUILD',icon:'⊞',
   render(){return `<div class="wrap">
     <h2 class="modehead">COMMAND BUILDER</h2>
-    <p class="modesub">Tap chunks to snap them into the tray; drag to reorder; add custom text (API keys, paths, prompts) wherever the command needs it. Chunks join with spaces.</p>
+    <p class="modesub">Tap chunks to snap them into the tray; drag to reorder; add custom text (API keys, paths, prompts) wherever the command needs it. The status line below the tray tells you what your chain does and whether it's a real, complete command.</p>
+    <div id="bl-guide">
+      <h4>What do you need the command to do?</h4>
+      <input id="bl-goal-q" placeholder='describe it and press Enter — e.g. "make replies more creative"'>
+      <div id="bl-goal-chips" class="bl-chips"></div>
+      <div id="bl-goal-active"></div>
+    </div>
     <div id="bl-tray"></div>
+    <div id="bl-status" aria-live="polite"></div>
     <div class="toolrow">
       <button class="btn" id="bl-custom">+ custom text</button>
       <button class="btn danger" id="bl-clear">clear</button>
@@ -1007,32 +1368,82 @@ ModeStudio.registerMode({
     <div id="bl-palette"></div></div>`;},
   init(){
     const st=Store.data.builder;
+    if(!('goal' in st))st.goal=null;
     const tray=document.getElementById('bl-tray');
     const prev=document.getElementById('bl-preview');
+    const statusEl=document.getElementById('bl-status');
+    const ga=document.getElementById('bl-goal-active');
+    const goals=GOALS.filter(g=>harnessMatch(g.harness));
+    const chipsEl=document.getElementById('bl-goal-chips');
+    const goalOf=()=>GOALS.find(g=>g.id===st.goal)||null;
+    const progress=(g)=>{let i=0;while(i<g.chunks.length&&st.seq[i]&&st.seq[i].txt===g.chunks[i])i++;return i;};
+    const setGoal=(g)=>{st.goal=g?g.id:null;drawAll();};
+
+    chipsEl.innerHTML=goals.map(g=>`<button class="chip" data-g="${g.id}">${esc(g.label)}</button>`).join('');
+    chipsEl.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{
+      const g=GOALS.find(x=>x.id===b.dataset.g);
+      setGoal(st.goal===g.id?null:g);});
+    document.getElementById('bl-goal-q').addEventListener('keydown',e=>{
+      if(e.key!=='Enter')return;
+      const q=e.target.value.toLowerCase();
+      let best=null,score=0;
+      goals.forEach(g=>{const s=g.kw.filter(k=>q.includes(k)).length+(q.includes(g.label.toLowerCase())?2:0);
+        if(s>score){score=s;best=g;}});
+      if(best)setGoal(best);
+      else toast('No guided recipe matches that — build freely and watch the status line','err');
+    });
+
+    const drawGuide=()=>{
+      const g=goalOf();
+      chipsEl.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',!!g&&b.dataset.g===g.id));
+      if(!g){ga.innerHTML='';return;}
+      const p=progress(g);
+      ga.innerHTML=p>=g.chunks.length
+        ?`<span class="ok">✓ Goal complete — this chain does it. Hit copy.</span> <button class="minibtn" id="bl-goal-x">done</button>`
+        :`Guiding: <b>${esc(g.label)}</b> — step ${p+1} of ${g.chunks.length}: tap the glowing <b class="next">${esc(g.chunks[p])}</b> chunk below.${p===0&&st.seq.length?' <span class="warn">Your tray differs from this recipe — clear it, or keep building freely.</span>':''} <button class="minibtn" id="bl-goal-x">stop guiding</button>`;
+      const x=document.getElementById('bl-goal-x');if(x)x.onclick=()=>setGoal(null);
+    };
+    const highlight=()=>{
+      const g=goalOf();const p=g?progress(g):-1;
+      document.querySelectorAll('#bl-palette .chip').forEach(b=>{
+        b.classList.remove('hint-next','hint-later');
+        if(!g||p>=g.chunks.length)return;
+        if(b.dataset.c===g.chunks[p])b.classList.add('hint-next');
+        else if(g.chunks.indexOf(b.dataset.c)>p)b.classList.add('hint-later');
+      });
+    };
+    const drawStatus=()=>{
+      const a=analyzeChain(st.seq.map(s=>s.txt));
+      const icon={valid:'✓',partial:'◐',invalid:'✗',unknown:'?',empty:'·'}[a.status];
+      statusEl.className='st-'+a.status;
+      statusEl.innerHTML=`<span class="ic">${icon}</span><span>${esc(a.explain)}${a.hint?' <i>'+esc(a.hint)+'</i>':''}</span>`;
+    };
     const draw=()=>{
       tray.innerHTML=st.seq.map((s,i)=>
-        `<div class="pchip ${s.custom?'custom':''} c-config" data-i="${i}"><span class="t">${esc(s.txt)}</span><span class="x">✕</span></div>`).join('')
-        ||'<span class="bl-empty">tray is empty — tap chunks below</span>';
+        `<div class="pchip ${s.custom?'custom':''} c-config" data-i="${i}" title="${esc(glossFor(s.txt))}"><span class="t">${esc(s.txt)}</span><span class="x">✕</span></div>`).join('')
+        ||'<span class="bl-empty">tray is empty — pick a goal above or tap chunks below</span>';
       prev.textContent=st.seq.map(s=>s.txt).join(' ')||'…';
       tray.querySelectorAll('.x').forEach(x=>x.onclick=()=>{
-        st.seq.splice(+x.closest('.pchip').dataset.i,1);draw();});
+        st.seq.splice(+x.closest('.pchip').dataset.i,1);drawAll();});
     };
+    const drawAll=()=>{draw();drawStatus();drawGuide();highlight();};
+
     this._sort=new Sortable(tray,{animation:150,ghostClass:'ghost',draggable:'.pchip',onEnd:()=>{
       const order=[...tray.querySelectorAll('.pchip')].map(el=>+el.dataset.i);
-      st.seq=order.map(i=>st.seq[i]);draw();}});
+      st.seq=order.map(i=>st.seq[i]);drawAll();}});
     document.getElementById('bl-palette').innerHTML=CHUNK_GROUPS.filter(g=>harnessMatch(g.harness)).map(g=>`
       <div class="bl-group"><h4>${esc(g.name)}</h4><div class="bl-chips">${
-        g.chunks.map(c=>`<button class="chip" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`).join('');
+        g.chunks.map(c=>`<button class="chip" data-c="${esc(c)}" title="${esc(glossFor(c))}">${esc(c)}</button>`).join('')}</div></div>`).join('');
     document.querySelectorAll('#bl-palette .chip').forEach(b=>b.onclick=()=>{
-      st.seq.push({txt:b.dataset.c});draw();});
+      st.seq.push({txt:b.dataset.c});drawAll();});
     document.getElementById('bl-custom').onclick=()=>{
       const v=prompt('Custom text (API key, path, model tag, prompt…):');
-      if(v){st.seq.push({txt:v,custom:true});draw();}};
-    document.getElementById('bl-clear').onclick=()=>{st.seq=[];draw();};
+      if(v){st.seq.push({txt:v,custom:true});drawAll();}};
+    document.getElementById('bl-clear').onclick=()=>{st.seq=[];drawAll();};
     document.getElementById('bl-copy').onclick=()=>{
       if(!st.seq.length){toast('Tray is empty','err');return;}
       copyText(st.seq.map(s=>s.txt).join(' '));};
-    draw();
+    drawAll();
   },
   destroy(){if(this._sort)this._sort.destroy();}
 });
@@ -1065,6 +1476,7 @@ function showHelp(){
     <div class="modalfoot"><button class="btn" onclick="closeModal()">Close</button></div>`);
 }
 function helpText(id){return{
+  simple:'plain-English start — pick a goal, get a ready command',
   control:'searchable database, click to copy',
   creativity:'drag-and-drop pockets for your own layout',
   speedrun:'terminal-style rapid copy with history and CPM',
