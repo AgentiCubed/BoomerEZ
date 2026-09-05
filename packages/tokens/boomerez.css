@@ -1,0 +1,71 @@
+/* BoomerEZ shared design tokens (toolchain lane — packages/).
+ *
+ * Values are codified FROM the shipped pages — the landing page and Mode
+ * Studio — not invented here: tooling never edits app HTML
+ * (docs/AGENT_LANES.md), so apps adopt tokens when the authoring lane
+ * chooses. The 18px floor comes from docs/DESIGN_STANDARD.md and Earl
+ * check 4; dense tool surfaces that sit below it today (Mode Studio's
+ * editor chrome) surface as earl-lint warnings, not build failures. */
+
+:root {
+  /* Color — the dark ground the collection ships on */
+  --bz-bg: #0b0e12;
+  --bz-panel: #12161c;
+  --bz-panel-2: #171c24;
+  --bz-edge: #232a33;
+  --bz-edge-2: #2e3742;
+  --bz-edge-strong: #8b95a3;
+  --bz-ink: #e8ecf1;
+  --bz-soft: #c3ccd6;
+  --bz-dim: #8b95a3;
+  --bz-faint: #5b6472;
+
+  /* Accent roles */
+  --bz-cyan: #4fc3f7;
+  --bz-amber: #ffb74d;
+  --bz-green: #66bb6a;
+  --bz-violet: #b388ff;
+  --bz-red: #ef6e6e;
+
+  /* Typography — 18px floor (Earl check 4: read without leaning in) */
+  --bz-font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --bz-font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --bz-text-floor: 18px;
+  --bz-text-base: 18px;
+  --bz-text-big: 20px;
+  --bz-text-h2: 23px;
+  --bz-text-h1: 34px;
+  --bz-leading-body: 1.65;
+  --bz-leading-tight: 1.25;
+
+  /* Spacing (4px rhythm, drawn from the landing card layout) */
+  --bz-space-1: 4px;
+  --bz-space-2: 8px;
+  --bz-space-3: 12px;
+  --bz-space-4: 16px;
+  --bz-space-5: 22px;
+  --bz-space-6: 24px;
+  --bz-space-8: 32px;
+  --bz-space-11: 44px;
+  --bz-space-12: 48px;
+
+  /* Shape — the card language of the landing page */
+  --bz-radius: 12px;
+  --bz-border: 2px;
+  --bz-accent-border: 6px;
+  --bz-shadow: 0 3px 8px rgba(0, 0, 0, .5);
+
+  /* Interaction — Earl check 9: one imprecise click completes the action */
+  --bz-tap-min: 44px;
+  --bz-focus-ring: 3px solid var(--bz-cyan);
+  --bz-focus-offset: 2px;
+
+  /* Motion */
+  --bz-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bz-duration: 0ms;
+  }
+}

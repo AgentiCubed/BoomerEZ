@@ -1,6 +1,6 @@
 # BoomerEZ
 
-[![Static Site CI](https://github.com/JamesTRichmond/BoomerEZ/actions/workflows/ci.yml/badge.svg)](https://github.com/JamesTRichmond/BoomerEZ/actions/workflows/ci.yml)
+[![Static Site CI](https://github.com/AgentiCubed/BoomerEZ/actions/workflows/ci.yml/badge.svg)](https://github.com/AgentiCubed/BoomerEZ/actions/workflows/ci.yml)
 
 Software for capable adults who were never taught the vocabulary.
 

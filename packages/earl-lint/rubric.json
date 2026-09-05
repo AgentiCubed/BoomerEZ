@@ -1,0 +1,16 @@
+{
+  "source": "docs/EARL_RUBRIC.md",
+  "policy": "warn-first",
+  "rules": [
+    { "id": "R1", "check": "doctype", "earl": "2/3 mechanical", "severity": "warn", "description": "Document declares <!doctype html>." },
+    { "id": "R2", "check": "html-lang", "earl": "2/3 mechanical", "severity": "warn", "description": "<html> element has a non-empty lang attribute." },
+    { "id": "R3", "check": "title-nonempty", "earl": "2/3 mechanical", "severity": "warn", "description": "Document has a non-empty <title>." },
+    { "id": "R4", "check": "viewport-meta", "earl": "2/3 mechanical", "severity": "warn", "description": "Document has a viewport meta tag." },
+    { "id": "R5", "check": "img-alt", "earl": "2/3 mechanical", "severity": "warn", "description": "Every <img> has a non-empty alt attribute." },
+    { "id": "R6", "check": "font-floor", "earl": "4", "severity": "warn", "description": "No font-size declaration sits below the 18px floor." },
+    { "id": "R7", "check": "tap-min", "earl": "9", "severity": "warn", "description": "Interactive pages declare a 44px tap-target minimum somewhere." },
+    { "id": "R8", "check": "drag-path", "earl": "9", "severity": "warn", "description": "Drag interactions are flagged so a click-only path can be confirmed." },
+    { "id": "R9", "check": "reduced-motion", "earl": "standard", "severity": "warn", "description": "Motion styling comes with a prefers-reduced-motion block." },
+    { "id": "R10", "check": "focus-visible", "earl": "standard", "severity": "warn", "description": "Interactive pages style :focus." }
+  ]
+}
