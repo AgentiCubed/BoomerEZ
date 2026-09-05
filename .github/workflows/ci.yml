@@ -74,3 +74,25 @@ jobs:
             exit 1
           fi
           echo "Clean."
+
+  toolchain:
+    name: Toolchain tests + offline bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run toolchain test suite
+        run: python3 tools/run_tests.py
+
+      - name: Rubric lint (earl-lint, warn-first)
+        run: python3 packages/earl-lint/earl_lint.py index.html apps
+
+      - name: Build offline bundle (fails if external requests remain)
+        run: python3 tools/build.py
+
+      - name: Upload offline bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-bundle
+          path: dist/
+          if-no-files-found: error
